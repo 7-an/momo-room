@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6efe4">
+  <meta name="description" content="一个属于你和小糯的温柔小房间。摸摸、喂食、陪玩，慢慢成为好朋友。">
+  <title>糯糯的小房间 · 虚拟陪伴小游戏</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./app.js" type="module"></script>
+</head>
+<body>
+  <svg class="svg-defs" aria-hidden="true"><defs>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-food" viewBox="0 0 24 24"><path d="M5 13h14l-1.5 8h-11L5 13Z"/><path d="M6 13c-3-4 0-7 3-6-1-5 6-6 6-1 4-1 7 4 3 7M9 16v2m6-2v2"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3 6.4 7 .9-5.1 5 1.3 7L12 18l-6.2 3.3 1.3-7L2 9.3l7-.9L12 2Z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.1A9 9 0 0 1 10.9 3 9 9 0 1 0 21 13.1Z"/></symbol>
+    <symbol id="i-clean" viewBox="0 0 24 24"><path d="M3 12h18v3a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7v-3Zm2 0V5a3 3 0 0 1 6 0M1 15h22"/><circle cx="17" cy="5" r="2"/><path d="M20 9h.01"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-.5 3-2.5 1-2.5-1.5-2 3.5L4 11v2l-2.5 2 2 3.5L6 17l2.5 1 .5 3h4l.5-3 2.5-1 2.5 1.5 2-3.5-2.5-2v-2l2.5-2-2-3.5L16 7l-2.5-1-.5-3H9Z"/><circle cx="11" cy="12" r="3"/></symbol>
+    <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5V4Zm4 4a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-gift" viewBox="0 0 24 24"><path d="M3 8h18v4H3V8Zm2 4v10h14V12M12 8v14"/><path d="M12 8C3 8 5 0 9 3l3 5Zm0 0c9 0 7-8 3-5l-3 5Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+  </defs></svg>
+  <div class="page">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="糯糯的小房间首页"><span class="brand-mark">n<span>✿</span></span><span>糯糯的小房间<small>A LITTLE WORLD, JUST FOR YOU</small></span></a>
+      <div class="header-tools"><span class="saved" id="save-status">进度已保存</span><button class="icon-button" id="sound-button" aria-label="开启音效" aria-pressed="false"><svg><use href="#i-sound"/></svg><span class="mute-line"></span></button><button class="icon-button" id="settings-button" aria-label="打开设置"><svg><use href="#i-settings"/></svg></button></div>
+    </header>
+    <main>
+      <div class="intro"><div><span class="eyebrow">YOUR DAILY DOSE OF CUTE</span><h1>今天，也一起可爱<span>。</span></h1><p>把日子过得软一点。你的小伙伴正在等你。</p></div><div class="date-pill"><svg><use href="#i-sun"/></svg><span id="day-label">陪伴的第 1 天</span></div></div>
+      <div class="game-layout">
+        <section class="room-card" aria-label="小糯的互动房间">
+          <div class="room-top"><div class="pet-label"><span class="online-dot"></span><strong class="pet-name">小糯</strong><span id="level-label">Lv. 1</span></div><div class="room-switch"><button id="room-toggle"><svg><use href="#i-sun"/></svg><span id="room-label">奶油日光</span></button></div></div>
+          <div class="stats" aria-label="小伙伴状态">
+            <div class="stat food"><svg><use href="#i-food"/></svg><div><div class="stat-label"><span>饱饱</span><span id="food-value">75%</span></div><div class="meter" role="progressbar" aria-label="饱食度" aria-valuemin="0" aria-valuemax="100" id="food-meter"><i></i></div></div></div>
+            <div class="stat joy"><svg><use href="#i-heart"/></svg><div><div class="stat-label"><span>开心</span><span id="joy-value">80%</span></div><div class="meter" role="progressbar" aria-label="开心度" aria-valuemin="0" aria-valuemax="100" id="joy-meter"><i></i></div></div></div>
+            <div class="stat energy"><svg><use href="#i-star"/></svg><div><div class="stat-label"><span>元气</span><span id="energy-value">90%</span></div><div class="meter" role="progressbar" aria-label="元气值" aria-valuemin="0" aria-valuemax="100" id="energy-meter"><i></i></div></div></div>
+          </div>
+          <div class="room" id="room">
+            <div class="wall-lines"></div><div class="window"><div class="outside"><i></i><b></b></div><div class="window-cross"></div><div class="curtain left"></div><div class="curtain right"></div></div>
+            <div class="wall-art"><span>slow<br>little<br>days.</span><i>✿</i></div><div class="wall-shelf"><div class="book"></div><div class="book second"></div><div class="vase"></div></div>
+            <div class="floor"></div><div class="chair"><div></div></div><div class="plant"><i></i><i></i><i></i><b></b></div><div class="rug"></div><div class="room-toy">✦</div>
+            <div class="speech" id="speech" role="status">你来啦！今天想一起做什么呀？</div>
+            <button class="character" id="character" aria-label="摸摸小糯，可以点击或滑动抚摸"><span class="sprite" id="sprite" role="img" aria-label="浅金卷发、蝴蝶结和蕾丝裙的3D风格小糯"></span></button>
+            <div class="effects" id="effects" aria-hidden="true"></div><div class="touch-hint" id="touch-hint"><svg><use href="#i-heart"/></svg>点击她，或者轻轻摸摸她</div>
+          </div>
+          <div class="actions" aria-label="照顾小伙伴">
+            <button data-action="pet" class="action pet"><span><svg><use href="#i-heart"/></svg></span><strong>摸摸</strong><small>给一点喜欢</small></button>
+            <button data-action="feed" class="action feed"><span><svg><use href="#i-food"/></svg></span><strong>喂食</strong><small>甜甜的点心</small></button>
+            <button data-action="play" class="action play"><span><svg><use href="#i-star"/></svg></span><strong>陪玩</strong><small>一起接星星</small></button>
+            <button data-action="wash" class="action wash"><span><svg><use href="#i-clean"/></svg></span><strong>洗香香</strong><small>泡泡小浴室</small></button>
+            <button data-action="sleep" class="action sleep"><span><svg><use href="#i-moon"/></svg></span><strong id="sleep-label">睡觉</strong><small id="sleep-hint">做个软软的梦</small></button>
+          </div>
+        </section>
+        <aside class="companion-panel">
+          <section class="friend-card"><span class="eyebrow">LITTLE BY LITTLE</span><h2>慢慢，成为好朋友</h2><div class="friend-illustration"><span>♡</span><span>✿</span></div><div class="friend-level"><strong id="friend-title">初见的小伙伴</strong><span id="xp-label">0 / 60</span></div><div class="xp-track"><i id="xp-fill"></i></div><p>每一次小小的照顾，<br>都会被她记在心里。</p><div class="coin-label"><span>✦</span><strong id="coin-count">0</strong><span>星星糖</span></div></section>
+          <section class="wish-card"><div class="section-heading"><h2>今天的小心愿</h2><span id="wish-count">0 / 3</span></div><p>不着急，一起完成就好。</p><ul id="wish-list"><li data-wish="pet"><span class="wish-check"></span><span>收到 5 次摸摸</span><small>0/5</small></li><li data-wish="feed"><span class="wish-check"></span><span>吃一份小点心</span><small>0/1</small></li><li data-wish="play"><span class="wish-check"></span><span>一起接一次星星</span><small>0/1</small></li></ul><div class="wish-reward" id="wish-reward">完成心愿 · 获得 20 颗星星糖</div></section>
+          <button class="gift-card" id="gift-button"><span class="gift-icon"><svg><use href="#i-gift"/></svg></span><span><strong>送她一份小惊喜</strong><small>10 颗星星糖换一束花</small></span><span>↗</span></button>
+          <p class="side-note">小小的陪伴，也有大大的意义。</p>
+        </aside>
+      </div>
+      <footer><span>为平凡的每一天，留一点柔软。</span><span>3D 风格虚拟伙伴 · 进度仅保存在本设备</span></footer>
+    </main>
+  </div>
+  <dialog id="settings-dialog"><form method="dialog" class="dialog-content"><button class="dialog-close icon-button" aria-label="关闭设置" value="cancel"><svg><use href="#i-close"/></svg></button><span class="eyebrow">MAKE IT YOURS</span><h2>你们的小房间</h2><label for="name-input">给小伙伴起个名字</label><input id="name-input" maxlength="12" placeholder="小糯" autocomplete="off"><p>名字最多 12 个字。照顾记录会自动保存在当前浏览器。</p><button type="submit" value="save" class="primary-button">保存名字</button><button type="button" id="help-button" class="text-button">怎么玩？</button></form></dialog>
+  <dialog id="help-dialog"><div class="dialog-content"><button class="dialog-close icon-button" id="help-close" aria-label="关闭说明"><svg><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE GUIDE</span><h2>一点点陪伴，就很好</h2><p>点击角色或在她身上滑动，就是摸摸。键盘也可以聚焦角色，按回车摸摸她。</p><p>点心补充饱食度；泡泡让她开心；睡觉恢复元气。睡着时点击「叫醒」继续玩。</p><p>陪玩时，在 15 秒内尽量接住星星。触屏点一下，或者用 Tab 和回车接星星。</p><p>照顾她会积累亲密度、升级和星星糖。完成每日心愿还能获得额外星星糖。长时间离开后状态会轻微下降，随时回来都可以。</p><p>本版本使用 3D 渲染角色图像与动作动画。没有录音、账号或跨设备同步。清除浏览器数据会清除进度。</p></div></dialog>
+  <dialog id="play-dialog"><div class="play-content"><div class="play-top"><div><span class="eyebrow">CATCH A LITTLE JOY</span><h2>一起接星星</h2></div><button id="play-close" class="icon-button" aria-label="结束陪玩"><svg><use href="#i-close"/></svg></button></div><div class="play-status"><span>接住 <strong id="play-score">0</strong> 颗</span><span id="play-time">15 秒</span></div><div class="star-field" id="star-field"><div class="play-intro" id="play-intro"><span>✦</span><h3>把落下的星星，送给她。</h3><p>15 秒，看看你们能收集多少颗。</p><button class="primary-button" id="play-start">开始接星星</button></div></div><p class="play-tip" id="play-tip">点一下发亮的星星就能接住。每颗停留 2.6 秒。</p></div></dialog>
+  <div class="toast" id="toast" role="status"></div>
+  <noscript><div class="no-script">请开启 JavaScript 来摸摸、喂食和保存小伙伴的进度。</div></noscript>
+</body>
+</html>
