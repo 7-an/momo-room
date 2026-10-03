@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { freshState, restoreState, care, applyElapsed, friendship } from '../model.js';
 const now = new Date(2026, 9, 3, 12).getTime();
+assert.equal(freshState(now).name, '啵啵');
+const renamed = restoreState({ ...freshState(now), name: '小糯', xp: 65, coins: 35 }, now);
+assert.equal(renamed.name, '啵啵');
+assert.equal(renamed.xp, 65); assert.equal(renamed.coins, 35);
+assert.equal(restoreState({ ...freshState(now), name: '奶糖' }, now).name, '奶糖', '改名不覆盖已有自定义名字');
 const state = freshState(now);
 care(state, 'feed'); assert.equal(state.food, 95);
 care(state, 'feed'); assert.equal(state.food, 100);

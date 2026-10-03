@@ -1,4 +1,4 @@
-import { STORAGE_KEY, freshState, restoreState, applyElapsed, friendship, care } from './model.js';
+import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care } from './model.js';
 const $ = (selector) => document.querySelector(selector);
 let state, storageAvailable = true;
 try { state = restoreState(JSON.parse(localStorage.getItem(STORAGE_KEY))); }
@@ -33,8 +33,8 @@ function render() {
   $('#xp-fill').style.width = `${friend.remaining / friend.needed * 100}%`;
   $('#coin-count').textContent = state.coins;
   $('#sleep-label').textContent = state.sleeping ? '叫醒' : '睡觉';
-  $('#sleep-hint').textContent = state.sleeping ? '元气慢慢恢复中' : '做个软软的梦';
-  $('#touch-hint').innerHTML = state.sleeping ? '<svg><use href="#i-moon"/></svg>嘘，让她做一会儿甜甜的梦' : '<svg><use href="#i-heart"/></svg>点击她，或者轻轻摸摸她';
+  $('#sleep-hint').textContent = state.sleeping ? '先别吵，补点元气' : '只是闭一下眼';
+  $('#touch-hint').innerHTML = state.sleeping ? '<svg><use href="#i-moon"/></svg>小声一点，啵啵在打盹' : '<svg><use href="#i-heart"/></svg>点一下，或者偷偷摸摸头';
   $('#sound-button').classList.toggle('sound-on', state.sound);
   $('#sound-button').setAttribute('aria-pressed', String(state.sound));
   $('#sound-button').setAttribute('aria-label', state.sound ? '关闭音效' : '开启音效');
@@ -95,7 +95,7 @@ function react(type, duration = 2100) {
   $('#sprite').className = `sprite ${type}`;
   reactionTimeout = setTimeout(() => $('#sprite').className = `sprite${state.sleeping ? ' sleeping' : ''}`, duration);
 }
-const petLines = ['嘿嘿，好喜欢这样摸摸。', '再靠近一点点嘛。', '今天也有被好好喜欢呢。', '你的手，好温柔呀。', '最喜欢和你待在一起了！'];
+const petLines = ['只准摸一下……刚才那下不算。', '手别停呀。……我是说，头发还没理好。', '哼，手法还算过关。', '再摸一会儿也行，反正我现在不忙。', '靠近一点，够不着啦。'];
 function act(action, point, gameScore = 0) {
   const wait = { pet: 650, feed: 2400, wash: 2200, gift: 1500, sleep: 450 }[action] || 0;
   const now = Date.now();
@@ -106,14 +106,14 @@ function act(action, point, gameScore = 0) {
   cooldowns.set(action, now);
   switch (action) {
     case 'pet': react('happy', 1300); effect('heart', 5, point); speak(petLines[Math.floor(Math.random() * petLines.length)]); break;
-    case 'feed': react('eating', 2500); effect('star', 4); speak('草莓小蛋糕！这一口也太幸福啦。'); break;
-    case 'wash': react('washing', 2200); effect('bubble', 16); speak('咕噜咕噜，变成香香的小伙伴。'); break;
-    case 'gift': react('gifting'); effect('flower', 8); speak('送给我的小花吗？我要好好收着！'); break;
-    case 'play': react('happy'); effect('star', 8); speak(`一起接住了 ${gameScore} 颗星星！你陪我玩就很开心。`); break;
+    case 'feed': react('eating', 2500); effect('star', 4); speak('这块给我的？嗯……草莓挑得还不错。'); break;
+    case 'wash': react('washing', 2200); effect('bubble', 16); speak('泡泡别弄进眼睛。水温倒是刚刚好。'); break;
+    case 'gift': react('gifting'); effect('flower', 8); speak('这花嘛，勉强合格。我去找个花瓶。'); break;
+    case 'play': react('happy'); effect('star', 8); speak(`接住了 ${gameScore} 颗？还不错，下次我可不会让着你。`); break;
     case 'sleep':
       clearTimeout(reactionTimeout); clearInterval(sleepEffectInterval);
       $('#sprite').className = `sprite${state.sleeping ? ' sleeping' : ''}`;
-      speak(state.sleeping ? '晚安呀，梦里也要一起玩。' : '睡得好舒服！又可以和你一起玩啦。');
+      speak(state.sleeping ? '我只是闭一下眼。你也早点睡。' : '我醒了。……你怎么还坐那么远？');
       if (state.sleeping) sleepEffectInterval = setInterval(() => { if (!document.hidden) effect('sleep', 2); }, 2400);
       break;
   }
@@ -156,8 +156,8 @@ $('#room-toggle').addEventListener('click', () => { state.night = !state.night; 
 $('#settings-button').addEventListener('click', () => { $('#name-input').value = state.name; $('#settings-dialog').returnValue = 'cancel'; $('#settings-dialog').showModal(); });
 $('#settings-dialog').addEventListener('close', () => {
   if ($('#settings-dialog').returnValue !== 'save') return;
-  state.name = Array.from($('#name-input').value.trim()).slice(0, 12).join('') || '小糯';
-  render(); save(); speak(`以后就叫我${state.name}啦，喜欢这个名字！`);
+  state.name = Array.from($('#name-input').value.trim()).slice(0, 12).join('') || DEFAULT_NAME;
+  render(); save(); speak(`${state.name}？嗯，记得好好叫我的名字。`);
 });
 $('#help-button').addEventListener('click', () => { $('#settings-dialog').close('cancel'); $('#help-dialog').showModal(); });
 $('#help-close').addEventListener('click', () => $('#help-dialog').close());
@@ -170,11 +170,11 @@ function clearGame() {
 }
 function openPlay() {
   applyElapsed(state); render(); save();
-  if (state.sleeping) { toast('她还在睡觉呢，先叫醒她吧。'); return; }
-  if (state.energy < 30) { toast('有点困啦，睡一会儿恢复元气再玩吧。'); return; }
+  if (state.sleeping) { const message = '嘘，我才刚睡着。等醒了再陪你。'; speak(message); toast(message); return; }
+  if (state.energy < 30) { const message = '先让我打个盹。醒了再比，免得你占便宜。'; speak(message); toast(message); return; }
   clearGame(); score = 0;
   $('#play-score').textContent = '0'; $('#play-time').textContent = '15 秒';
-  $('#play-intro').innerHTML = '<span>✦</span><h3>把落下的星星，送给她。</h3><p>15 秒，看看你们能收集多少颗。</p><button class="primary-button" id="play-start">开始接星星</button>';
+  $('#play-intro').innerHTML = '<span>✦</span><h3>听说你很会接星星？</h3><p>给你 15 秒。让我看看你的本事。</p><button class="primary-button" id="play-start">开始接星星</button>';
   $('#play-intro').hidden = false;
   $('#play-intro').style.display = 'flex';
   $('#play-start').addEventListener('click', startGame);
@@ -215,7 +215,7 @@ function finishGame() {
   clearGame(); $('#play-time').textContent = '完成啦';
   act('play', null, score);
   const intro = $('#play-intro'); intro.style.display = 'flex';
-  intro.innerHTML = `<span>✦</span><h3>你们接住了 ${score} 颗星星！</h3><p>获得 ${score} 颗星星糖，还有一份共同的快乐。</p><button class="primary-button" id="play-done">回到小房间</button>`;
+  intro.innerHTML = `<span>✦</span><h3>不错嘛，${score} 颗星星。</h3><p>获得 ${score} 颗星星糖。先收好，下次再比一局。</p><button class="primary-button" id="play-done">回到小房间</button>`;
   $('#play-done').addEventListener('click', () => $('#play-dialog').close());
   $('#play-done').focus();
 }
@@ -229,7 +229,7 @@ window.addEventListener('pagehide', save);
 setInterval(() => { if (document.hidden) return; applyElapsed(state); render(); save(); }, 5000);
 render(); save();
 if (state.sleeping) {
-  speak('还在做甜甜的梦呢，醒来就找你。');
+  speak('小声一点。我还没睡醒呢。');
   sleepEffectInterval = setInterval(() => { if (!document.hidden) effect('sleep', 2); }, 2400);
 }
 if (!storageAvailable) toast('浏览器暂时不能保存进度。当前页面仍然可以玩。');

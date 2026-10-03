@@ -1,4 +1,5 @@
 export const STORAGE_KEY = 'momo-room-v1';
+export const DEFAULT_NAME = '啵啵';
 export const clamp = (n, low = 0, high = 100) => Math.min(high, Math.max(low, n));
 export const dayKey = (now = Date.now()) => {
   const d = new Date(now);
@@ -6,7 +7,7 @@ export const dayKey = (now = Date.now()) => {
 };
 const number = (value, fallback, max = 100) => typeof value === 'number' && Number.isFinite(value) ? clamp(value, 0, max) : fallback;
 export function freshState(now = Date.now()) {
-  return { version: 1, name: '小糯', food: 75, joy: 80, energy: 90, xp: 0, coins: 0, sleeping: false, night: false, sound: false, createdAt: now, updatedAt: now, daily: { day: dayKey(now), pet: 0, feed: 0, play: 0, claimed: false } };
+  return { version: 1, name: DEFAULT_NAME, food: 75, joy: 80, energy: 90, xp: 0, coins: 0, sleeping: false, night: false, sound: false, createdAt: now, updatedAt: now, daily: { day: dayKey(now), pet: 0, feed: 0, play: 0, claimed: false } };
 }
 export function restoreState(raw, now = Date.now()) {
   const state = freshState(now);
@@ -15,6 +16,8 @@ export function restoreState(raw, now = Date.now()) {
   for (const key of ['xp', 'coins']) state[key] = number(raw[key], 0, 1e7);
   for (const key of ['sleeping', 'night', 'sound']) state[key] = raw[key] === true;
   if (typeof raw.name === 'string' && raw.name.trim()) state.name = Array.from(raw.name.trim()).slice(0, 12).join('');
+  // Upgrade the original default name without resetting progress or custom names.
+  if (state.name === '小糯') state.name = DEFAULT_NAME;
   for (const key of ['createdAt', 'updatedAt']) state[key] = number(raw[key], now, now) || now;
   if (raw.daily?.day === dayKey(now)) {
     for (const key of ['pet', 'feed', 'play']) state.daily[key] = number(raw.daily[key], 0, 999);
@@ -35,14 +38,14 @@ export function applyElapsed(state, now = Date.now()) {
 export function friendship(xp) {
   let level = 1, remaining = Math.floor(xp), needed = 60;
   while (remaining >= needed) { remaining -= needed; level++; needed = 60 + (level - 1) * 30; }
-  const titles = ['初见的小伙伴', '熟悉的小伙伴', '亲密的好朋友', '默契的好朋友', '最喜欢的你'];
+  const titles = ['允许你坐旁边', '勉强算是熟人', '给你留了位置', '不用客气的关系', '只给你的偏心'];
   return { level, remaining, needed, title: titles[Math.min(level - 1, titles.length - 1)] };
 }
 export function care(state, action, score = 0) {
-  if (state.sleeping && action !== 'sleep') return { ok: false, message: '她正在做梦呢，先轻轻叫醒她吧。' };
-  if (action === 'feed' && state.food >= 97) return { ok: false, message: '肚子已经饱饱的啦，晚一点再吃吧。' };
-  if (action === 'gift' && state.coins < 10) return { ok: false, message: '还差一点星星糖，陪她玩一会儿就有啦。' };
-  if (action === 'play' && state.energy < 30) return { ok: false, message: '有点困啦，先睡一小会儿再玩吧。' };
+  if (state.sleeping && action !== 'sleep') return { ok: false, message: '嘘，我才刚睡着。等醒了再陪你。' };
+  if (action === 'feed' && state.food >= 97) return { ok: false, message: '已经饱啦。这份先留着，待会儿再给我。' };
+  if (action === 'gift' && state.coins < 10) return { ok: false, message: '星星糖还不够呢。陪我接几颗再说。' };
+  if (action === 'play' && state.energy < 30) return { ok: false, message: '先让我打个盹。醒了再比，免得你占便宜。' };
   const beforeLevel = friendship(state.xp).level;
   const delta = { pet: [0, 5, 0, 4, 1], feed: [20, 4, 0, 8, 2], wash: [0, 8, -2, 6, 2], gift: [0, 12, 0, 10, -10], play: [-3, 12, -10, 5 + score * 2, score] }[action];
   if (action === 'sleep') state.sleeping = !state.sleeping;
