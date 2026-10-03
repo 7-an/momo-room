@@ -1,4 +1,5 @@
-import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care } from './model.js';
+import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care, canInteract, dailyPlan } from './model.js';
+import { stageFor, greeting, petLines } from './dialogue.js';
 const $ = (selector) => document.querySelector(selector);
 let state, storageAvailable = true;
 try { state = restoreState(JSON.parse(localStorage.getItem(STORAGE_KEY))); }
@@ -21,11 +22,33 @@ function render() {
     $(`#${key}-meter i`).style.width = `${value}%`;
   }
   const friend = friendship(state.xp);
+  const stage = stageFor(friend.level);
+  $('#intro-title').firstChild.textContent = stage.heading;
+  $('#intro-caption').textContent = stage.caption;
+  $('#friend-note').textContent = stage.note;
+  $('#boundary-note').textContent = stage.next;
+  $('#side-note').textContent = friend.level < 3 ? '不着急，先慢慢认识。' : '熟悉一点，再靠近一点。';
+  $('#footer-note').textContent = friend.level < 3 ? '从一句你好开始。' : '慢慢熟悉，也是一件小事。';
+  const greetingCoolingDown = Date.now() - (cooldowns.get('greet') || 0) < 3000;
+  $('#greet-label').textContent = greetingCoolingDown ? '听啵啵说完' : friend.level === 1 ? '打招呼' : '聊聊天';
+  const actionHints = { pet: '只准摸一下', feed: friend.level === 3 ? '带一份点心' : '草莓挑得不错', play: friend.level < 4 ? '一起接星星' : '来比一局', wash: '水温刚刚好' };
+  document.querySelectorAll('[data-action]').forEach(button => {
+    const action = button.dataset.action, access = canInteract(state, action);
+    button.disabled = !access.ok || (state.sleeping && action !== 'sleep') || (action === 'greet' && greetingCoolingDown);
+    button.classList.toggle('locked', !access.ok);
+    button.title = access.ok ? '' : `${access.message} Lv. ${access.requiredLevel} 解锁。`;
+    if (actionHints[action]) button.querySelector('small').textContent = access.ok ? actionHints[action] : `Lv. ${access.requiredLevel} 解锁`;
+  });
+  const giftAccess = canInteract(state, 'gift');
+  $('#gift-button').disabled = !giftAccess.ok || state.sleeping;
+  $('#gift-hint').textContent = giftAccess.ok ? '10 颗星星糖换一束花' : '逐渐熟悉后 · Lv. 3 解锁';
+  const touchAllowed = canInteract(state, 'pet').ok;
+  $('#character').classList.toggle('can-pet', touchAllowed);
   $('.room-card').classList.toggle('night', state.night);
   $('#room-label').textContent = state.night ? '莓莓晚风' : '奶油日光';
   $('#room-toggle').setAttribute('aria-label', `当前${state.night ? '莓莓晚风' : '奶油日光'}，点击切换房间`);
   document.querySelectorAll('.pet-name').forEach(el => el.textContent = state.name);
-  $('#character').setAttribute('aria-label', `摸摸${state.name}，可以点击或滑动抚摸`);
+  $('#character').setAttribute('aria-label', touchAllowed ? `摸摸${state.name}，可以点击或滑动抚摸` : `向${state.name}${friend.level === 1 ? '打招呼' : '聊聊天'}，目前不能抚摸`);
   $('#sprite').setAttribute('aria-label', `浅金卷发、蝴蝶结和蕾丝裙的3D风格${state.name}`);
   $('#level-label').textContent = `Lv. ${friend.level}`;
   $('#friend-title').textContent = friend.title;
@@ -33,23 +56,28 @@ function render() {
   $('#xp-fill').style.width = `${friend.remaining / friend.needed * 100}%`;
   $('#coin-count').textContent = state.coins;
   $('#sleep-label').textContent = state.sleeping ? '叫醒' : '睡觉';
-  $('#sleep-hint').textContent = state.sleeping ? '先别吵，补点元气' : '只是闭一下眼';
-  $('#touch-hint').innerHTML = state.sleeping ? '<svg><use href="#i-moon"/></svg>小声一点，啵啵在打盹' : '<svg><use href="#i-heart"/></svg>点一下，或者偷偷摸摸头';
+  $('#sleep-hint').textContent = state.sleeping ? '元气慢慢恢复中' : canInteract(state, 'sleep').ok ? '休息一小会儿' : 'Lv. 3 解锁';
+  $('#touch-hint').textContent = state.sleeping ? '小声一点，先让啵啵打个盹' : touchAllowed ? '现在可以轻轻摸摸头了' : friend.level === 1 ? '还不熟，点一下打个招呼吧' : '点一下聊聊天，摸摸还要再熟悉一点';
   $('#sound-button').classList.toggle('sound-on', state.sound);
   $('#sound-button').setAttribute('aria-pressed', String(state.sound));
   $('#sound-button').setAttribute('aria-label', state.sound ? '关闭音效' : '开启音效');
   const first = new Date(state.createdAt); first.setHours(0, 0, 0, 0);
   const today = new Date(); today.setHours(0, 0, 0, 0);
   $('#day-label').textContent = `陪伴的第 ${Math.max(1, Math.round((today - first) / 86400000) + 1)} 天`;
-  const needs = { pet: 5, feed: 1, play: 1 };
+  const plan = dailyPlan(state);
   let complete = 0;
-  for (const [key, required] of Object.entries(needs)) {
-    const row = $(`[data-wish="${key}"]`), done = state.daily[key] >= required;
+  $('#wish-list').replaceChildren();
+  for (const { key, target, label } of plan) {
+    const row = document.createElement('li'), done = state.daily[key] >= target;
+    const check = document.createElement('span'); check.className = 'wish-check';
+    const description = document.createElement('span'); description.textContent = label;
+    const count = document.createElement('small'); count.textContent = `${Math.min(target, state.daily[key])}/${target}`;
+    row.append(check, description, count);
     row.classList.toggle('done', done);
-    row.querySelector('small').textContent = `${Math.min(required, state.daily[key])}/${required}`;
+    $('#wish-list').append(row);
     if (done) complete++;
   }
-  $('#wish-count').textContent = `${complete} / 3`;
+  $('#wish-count').textContent = `${complete} / ${plan.length}`;
   $('#wish-reward').textContent = state.daily.claimed ? '今天的 20 颗星星糖，已经收好啦' : '完成心愿 · 获得 20 颗星星糖';
   $('#sprite').classList.toggle('sleeping', state.sleeping);
 }
@@ -95,31 +123,37 @@ function react(type, duration = 2100) {
   $('#sprite').className = `sprite ${type}`;
   reactionTimeout = setTimeout(() => $('#sprite').className = `sprite${state.sleeping ? ' sleeping' : ''}`, duration);
 }
-const petLines = ['只准摸一下……刚才那下不算。', '手别停呀。……我是说，头发还没理好。', '哼，手法还算过关。', '再摸一会儿也行，反正我现在不忙。', '靠近一点，够不着啦。'];
 function act(action, point, gameScore = 0) {
-  const wait = { pet: 650, feed: 2400, wash: 2200, gift: 1500, sleep: 450 }[action] || 0;
+  const wait = { greet: 3000, pet: 650, feed: 2400, wash: 2200, gift: 1500, sleep: 450 }[action] || 0;
   const now = Date.now();
-  if (now - (cooldowns.get(action) || 0) < wait) return;
+  if (now - (cooldowns.get(action) || 0) < wait) { if (action === 'greet') toast('让啵啵把上一句话说完，再继续聊吧。'); return; }
   applyElapsed(state, now);
   const result = care(state, action, gameScore);
   if (!result.ok) { speak(result.message); toast(result.message); return; }
   cooldowns.set(action, now);
+  if (action === 'greet') setTimeout(render, wait + 10);
+  const level = friendship(state.xp).level;
   switch (action) {
+    case 'greet': react('greeting', 850); speak(greeting(level, state.name)); break;
     case 'pet': react('happy', 1300); effect('heart', 5, point); speak(petLines[Math.floor(Math.random() * petLines.length)]); break;
-    case 'feed': react('eating', 2500); effect('star', 4); speak('这块给我的？嗯……草莓挑得还不错。'); break;
+    case 'feed': react('eating', 2500); effect('star', 4); speak(level < 4 ? '谢谢，点心我收下了。' : '这块给我的？嗯……草莓挑得还不错。'); break;
     case 'wash': react('washing', 2200); effect('bubble', 16); speak('泡泡别弄进眼睛。水温倒是刚刚好。'); break;
-    case 'gift': react('gifting'); effect('flower', 8); speak('这花嘛，勉强合格。我去找个花瓶。'); break;
-    case 'play': react('happy'); effect('star', 8); speak(`接住了 ${gameScore} 颗？还不错，下次我可不会让着你。`); break;
+    case 'gift': react('gifting'); effect('flower', 8); speak(level < 4 ? '谢谢。我找个花瓶，把它放好。' : '这花嘛，勉强合格。我去找个花瓶。'); break;
+    case 'play': react('happy'); effect('star', 8); speak(level < 4 ? `${gameScore} 颗星星。谢谢你陪我玩这一局。` : `接住了 ${gameScore} 颗？还不错，下次我可不会让着你。`); break;
     case 'sleep':
       clearTimeout(reactionTimeout); clearInterval(sleepEffectInterval);
       $('#sprite').className = `sprite${state.sleeping ? ' sleeping' : ''}`;
-      speak(state.sleeping ? '我只是闭一下眼。你也早点睡。' : '我醒了。……你怎么还坐那么远？');
+      speak(state.sleeping ? (level < 4 ? '我先休息一会儿。下次再聊吧。' : '我只是闭一下眼。你也早点睡。') : (level < 4 ? '我醒了。要聊一会儿吗？' : '我醒了。……你怎么还坐那么远？'));
       if (state.sleeping) sleepEffectInterval = setInterval(() => { if (!document.hidden) effect('sleep', 2); }, 2400);
       break;
   }
   sound(action === 'sleep' ? 'sleep' : 'soft');
   render(); save();
-  if (result.levelUp) toast(`你们的亲密度升级啦！现在是 Lv. ${friendship(state.xp).level}`);
+  if (result.levelUp) {
+    speak(stageFor(level).opening);
+    const unlocked = { 2: '聊天和接星星已开放。', 3: '可以带点心、送礼物和陪伴休息。', 4: '现在可以轻轻摸摸、帮忙洗香香。', 5: '现在可以更自在地相处了。' }[level] || '又熟悉了一点。';
+    toast(`关系变成「${friendship(state.xp).title}」。${unlocked}`);
+  }
   if (result.dailyReward) setTimeout(() => toast('今天的小心愿完成啦！收下 20 颗星星糖。'), result.levelUp ? 3400 : 400);
 }
 
@@ -136,6 +170,7 @@ $('#character').addEventListener('pointerdown', event => {
 });
 $('#character').addEventListener('pointermove', event => {
   if (!pointer || pointer.id !== event.pointerId) return;
+  if (!canInteract(state, 'pet').ok) return;
   travel += Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y);
   pointer.x = event.clientX; pointer.y = event.clientY;
   if (travel > 35) {
@@ -146,18 +181,18 @@ $('#character').addEventListener('pointermove', event => {
 });
 $('#character').addEventListener('pointerup', event => {
   if (pointer?.id !== event.pointerId) return;
-  if (!stroked) { const bounds = $('#room').getBoundingClientRect(); act('pet', { x: event.clientX - bounds.left, y: event.clientY - bounds.top }); }
+  if (!stroked) { const bounds = $('#room').getBoundingClientRect(); act(canInteract(state, 'pet').ok ? 'pet' : 'greet', { x: event.clientX - bounds.left, y: event.clientY - bounds.top }); }
   pointer = null;
 });
 $('#character').addEventListener('pointercancel', () => pointer = null);
-$('#character').addEventListener('click', event => { if (event.detail === 0) act('pet'); });
+$('#character').addEventListener('click', event => { if (event.detail === 0) act(canInteract(state, 'pet').ok ? 'pet' : 'greet'); });
 $('#sound-button').addEventListener('click', () => { state.sound = !state.sound; render(); save(); sound(); toast(state.sound ? '轻轻的音效，已开启' : '音效已关闭'); });
 $('#room-toggle').addEventListener('click', () => { state.night = !state.night; render(); save(); });
 $('#settings-button').addEventListener('click', () => { $('#name-input').value = state.name; $('#settings-dialog').returnValue = 'cancel'; $('#settings-dialog').showModal(); });
 $('#settings-dialog').addEventListener('close', () => {
   if ($('#settings-dialog').returnValue !== 'save') return;
   state.name = Array.from($('#name-input').value.trim()).slice(0, 12).join('') || DEFAULT_NAME;
-  render(); save(); speak(`${state.name}？嗯，记得好好叫我的名字。`);
+  render(); save(); speak(friendship(state.xp).level < 4 ? `嗯，我叫${state.name}。` : `${state.name}？嗯，记得好好叫我的名字。`);
 });
 $('#help-button').addEventListener('click', () => { $('#settings-dialog').close('cancel'); $('#help-dialog').showModal(); });
 $('#help-close').addEventListener('click', () => $('#help-dialog').close());
@@ -170,11 +205,15 @@ function clearGame() {
 }
 function openPlay() {
   applyElapsed(state); render(); save();
+  const access = canInteract(state, 'play');
+  if (!access.ok) { speak(access.message); toast(access.message); return; }
   if (state.sleeping) { const message = '嘘，我才刚睡着。等醒了再陪你。'; speak(message); toast(message); return; }
   if (state.energy < 30) { const message = '先让我打个盹。醒了再比，免得你占便宜。'; speak(message); toast(message); return; }
   clearGame(); score = 0;
   $('#play-score').textContent = '0'; $('#play-time').textContent = '15 秒';
-  $('#play-intro').innerHTML = '<span>✦</span><h3>听说你很会接星星？</h3><p>给你 15 秒。让我看看你的本事。</p><button class="primary-button" id="play-start">开始接星星</button>';
+  const closeFriends = friendship(state.xp).level >= 4;
+  $('#play-title').textContent = closeFriends ? '来比一局' : '一起接星星';
+  $('#play-intro').innerHTML = `<span>✦</span><h3>${closeFriends ? '听说你很会接星星？' : '一起玩一小局接星星？'}</h3><p>${closeFriends ? '给你 15 秒。让我看看你的本事。' : '15 秒，试试能接住多少颗。'}</p><button class="primary-button" id="play-start">开始接星星</button>`;
   $('#play-intro').hidden = false;
   $('#play-intro').style.display = 'flex';
   $('#play-start').addEventListener('click', startGame);
@@ -229,9 +268,9 @@ window.addEventListener('pagehide', save);
 setInterval(() => { if (document.hidden) return; applyElapsed(state); render(); save(); }, 5000);
 render(); save();
 if (state.sleeping) {
-  speak('小声一点。我还没睡醒呢。');
+  speak('我还在休息。醒了再聊吧。');
   sleepEffectInterval = setInterval(() => { if (!document.hidden) effect('sleep', 2); }, 2400);
-}
+} else speak(stageFor(friendship(state.xp).level).opening);
 if (!storageAvailable) toast('浏览器暂时不能保存进度。当前页面仍然可以玩。');
 const checkImage = new Image(); checkImage.src = './assets/character.png';
 checkImage.onerror = () => { speak('角色图片暂时没加载好，刷新一下再见面吧。'); toast('角色素材加载失败，请检查网络后刷新。'); };
