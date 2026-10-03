@@ -38,8 +38,8 @@ export function applyElapsed(state, now = Date.now()) {
   return state;
 }
 export function friendship(xp) {
-  let level = 1, remaining = Math.floor(xp), needed = 60;
-  while (remaining >= needed) { remaining -= needed; level++; needed = 60 + (level - 1) * 30; }
+  let level = 1, remaining = Math.floor(xp), needed = 18;
+  while (remaining >= needed) { remaining -= needed; level++; needed = 24; }
   const titles = ['陌生人', '点头之交', '逐渐熟悉', '亲近的朋友', '特别的默契'];
   return { level, remaining, needed, title: titles[Math.min(level - 1, titles.length - 1)] };
 }
