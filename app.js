@@ -1,5 +1,5 @@
-import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care, canInteract, dailyPlan } from './model.js';
-import { stageFor, greeting, petLines } from './dialogue.js';
+import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care, canInteract, dailyPlan } from './model.js?v=20261003b';
+import { stageFor, greeting, petLines } from './dialogue.js?v=20261003b';
 const $ = (selector) => document.querySelector(selector);
 let state, storageAvailable = true;
 try { state = restoreState(JSON.parse(localStorage.getItem(STORAGE_KEY))); }
@@ -151,7 +151,7 @@ function act(action, point, gameScore = 0) {
   render(); save();
   if (result.levelUp) {
     speak(stageFor(level).opening);
-    const unlocked = { 2: '聊天和接星星已开放。', 3: '可以带点心、送礼物和陪伴休息。', 4: '现在可以轻轻摸摸、帮忙洗香香。', 5: '现在可以更自在地相处了。' }[level] || '又熟悉了一点。';
+    const unlocked = { 2: '聊天和接星星已开放。', 3: '可以带点心、送礼物和陪伴休息。', 4: '现在可以轻轻摸摸。', 5: '现在可以帮忙洗香香了。' }[level] || '又熟悉了一点。';
     toast(`关系变成「${friendship(state.xp).title}」。${unlocked}`);
   }
   if (result.dailyReward) setTimeout(() => toast('今天的小心愿完成啦！收下 20 颗星星糖。'), result.levelUp ? 3400 : 400);
@@ -272,5 +272,5 @@ if (state.sleeping) {
   sleepEffectInterval = setInterval(() => { if (!document.hidden) effect('sleep', 2); }, 2400);
 } else speak(stageFor(friendship(state.xp).level).opening);
 if (!storageAvailable) toast('浏览器暂时不能保存进度。当前页面仍然可以玩。');
-const checkImage = new Image(); checkImage.src = './assets/character.png';
+const checkImage = new Image(); checkImage.src = './assets/character.webp';
 checkImage.onerror = () => { speak('角色图片暂时没加载好，刷新一下再见面吧。'); toast('角色素材加载失败，请检查网络后刷新。'); };

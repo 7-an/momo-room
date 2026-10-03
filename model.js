@@ -1,6 +1,6 @@
 export const STORAGE_KEY = 'momo-room-v1';
 export const DEFAULT_NAME = '啵啵';
-export const ACTION_LEVELS = { greet: 1, play: 2, feed: 3, gift: 3, sleep: 3, pet: 4, wash: 4 };
+export const ACTION_LEVELS = { greet: 1, play: 2, feed: 3, gift: 3, sleep: 3, pet: 4, wash: 5 };
 export const clamp = (n, low = 0, high = 100) => Math.min(high, Math.max(low, n));
 export const dayKey = (now = Date.now()) => {
   const d = new Date(now);

@@ -7,8 +7,9 @@
   <meta name="description" content="啵啵的房间。从一句你好开始，随着关系熟悉逐步开放聊天、陪玩和照顾。">
   <title>啵啵的房间 · 虚拟陪伴小游戏</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css">
-  <script src="./app.js" type="module"></script>
+  <link rel="preload" href="./assets/character.webp" as="image" type="image/webp" fetchpriority="high">
+  <link rel="stylesheet" href="./style.css?v=20261003b">
+  <script src="./app.js?v=20261003b" type="module"></script>
 </head>
 <body>
   <svg class="svg-defs" aria-hidden="true"><defs>
@@ -49,11 +50,11 @@
           </div>
           <div class="contact-strip"><div><strong>慢慢认识</strong><p id="boundary-note">Lv. 2：可以聊天、一起接星星。</p></div><button data-action="greet" id="greet-button" class="primary-button"><span id="greet-label">打招呼</span></button></div>
           <div class="actions" aria-label="关系熟悉后逐步开放的互动">
-            <button data-action="pet" class="action pet"><span><svg><use href="#i-heart"/></svg></span><strong>摸摸</strong><small>只准摸一下</small></button>
-            <button data-action="feed" class="action feed"><span><svg><use href="#i-food"/></svg></span><strong>喂食</strong><small>草莓挑得不错</small></button>
             <button data-action="play" class="action play"><span><svg><use href="#i-star"/></svg></span><strong>陪玩</strong><small>来比一局</small></button>
-            <button data-action="wash" class="action wash"><span><svg><use href="#i-clean"/></svg></span><strong>洗香香</strong><small>水温刚刚好</small></button>
+            <button data-action="feed" class="action feed"><span><svg><use href="#i-food"/></svg></span><strong>喂食</strong><small>草莓挑得不错</small></button>
             <button data-action="sleep" class="action sleep"><span><svg><use href="#i-moon"/></svg></span><strong id="sleep-label">睡觉</strong><small id="sleep-hint">只是闭一下眼</small></button>
+            <button data-action="pet" class="action pet"><span><svg><use href="#i-heart"/></svg></span><strong>摸摸</strong><small>只准摸一下</small></button>
+            <button data-action="wash" class="action wash"><span><svg><use href="#i-clean"/></svg></span><strong>洗香香</strong><small>水温刚刚好</small></button>
           </div>
         </section>
         <aside class="companion-panel">
@@ -67,7 +68,7 @@
     </main>
   </div>
   <dialog id="settings-dialog"><form method="dialog" class="dialog-content"><button class="dialog-close icon-button" aria-label="关闭设置" value="cancel"><svg><use href="#i-close"/></svg></button><span class="eyebrow">MAKE IT YOURS</span><h2>你们的小房间</h2><label for="name-input">给小伙伴起个名字</label><input id="name-input" maxlength="12" placeholder="啵啵" autocomplete="off"><p>名字最多 12 个字。照顾记录会自动保存在当前浏览器。</p><button type="submit" value="save" class="primary-button">保存名字</button><button type="button" id="help-button" class="text-button">怎么玩？</button></form></dialog>
-  <dialog id="help-dialog"><div class="dialog-content"><button class="dialog-close icon-button" id="help-close" aria-label="关闭说明"><svg><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE GUIDE</span><h2>从陌生人，慢慢认识</h2><p>此游戏纯为虚构。</p><p>Lv. 1 是陌生人，只能打招呼；Lv. 2 开放聊天和接星星；Lv. 3 才能带点心、送礼物和陪伴休息；Lv. 4 才可以摸摸、帮忙洗香香。</p><p>刚认识时，点击角色或按回车只是打招呼。解锁摸摸之后，才可以在角色身上滑动抚摸。打 3 次招呼即可进入下一阶段，之后每阶段聊 3 次天即可继续熟悉。每次间隔至少 3 秒。</p><p>点心补充饱食度；泡泡增加开心度；睡觉恢复元气。睡着时点击「叫醒」继续玩。</p><p>陪玩时，在 15 秒内尽量接住星星。触屏点一下，或者用 Tab 和回车接星星。</p><p>照顾啵啵会积累亲密度、升级和星星糖。完成每日心愿还能获得额外星星糖。长时间离开后状态会轻微下降，随时回来都可以。</p><p>本版本使用 3D 渲染角色图像与动作动画。没有录音、账号或跨设备同步。清除浏览器数据会清除进度。</p></div></dialog>
+  <dialog id="help-dialog"><div class="dialog-content"><button class="dialog-close icon-button" id="help-close" aria-label="关闭说明"><svg><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE GUIDE</span><h2>从陌生人，慢慢认识</h2><p>此游戏纯为虚构。</p><p>Lv. 1 是陌生人，只能打招呼；Lv. 2 开放聊天和接星星；Lv. 3 才能带点心、送礼物和陪伴休息；Lv. 4 才可以摸摸；Lv. 5 最后开放洗香香。</p><p>刚认识时，点击角色或按回车只是打招呼。解锁摸摸之后，才可以在角色身上滑动抚摸。打 3 次招呼即可进入下一阶段，之后每阶段聊 3 次天即可继续熟悉。每次间隔至少 3 秒。</p><p>点心补充饱食度；泡泡增加开心度；睡觉恢复元气。睡着时点击「叫醒」继续玩。</p><p>陪玩时，在 15 秒内尽量接住星星。触屏点一下，或者用 Tab 和回车接星星。</p><p>照顾啵啵会积累亲密度、升级和星星糖。完成每日心愿还能获得额外星星糖。长时间离开后状态会轻微下降，随时回来都可以。</p><p>本版本使用 3D 渲染角色图像与动作动画。没有录音、账号或跨设备同步。清除浏览器数据会清除进度。</p></div></dialog>
   <dialog id="play-dialog"><div class="play-content"><div class="play-top"><div><span class="eyebrow">CATCH A LITTLE JOY</span><h2 id="play-title">一起接星星</h2></div><button id="play-close" class="icon-button" aria-label="结束陪玩"><svg><use href="#i-close"/></svg></button></div><div class="play-status"><span>接住 <strong id="play-score">0</strong> 颗</span><span id="play-time">15 秒</span></div><div class="star-field" id="star-field"><div class="play-intro" id="play-intro"><span>✦</span><h3>听说你很会接星星？</h3><p>给你 15 秒。让我看看你的本事。</p><button class="primary-button" id="play-start">开始接星星</button></div></div><p class="play-tip" id="play-tip">点一下发亮的星星就能接住。每颗停留 2.6 秒。</p></div></dialog>
   <div class="toast" id="toast" role="status"></div>
   <noscript><div class="no-script">请开启 JavaScript 来打招呼、逐步认识啵啵和保存进度。</div></noscript>
