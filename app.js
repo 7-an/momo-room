@@ -1,5 +1,6 @@
-import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care, canInteract, dailyPlan } from './model.js?v=20261003b';
-import { stageFor, greeting, petLines } from './dialogue.js?v=20261003b';
+import { STORAGE_KEY, DEFAULT_NAME, freshState, restoreState, applyElapsed, friendship, care, canInteract, dailyPlan, chat, dayKey } from './model.js?v=20261005b';
+import { stageFor, greeting, petLines } from './dialogue.js?v=20261005b';
+import { stories, topics, memoryDefinitions, followup } from './journey.js?v=20261005b';
 const $ = (selector) => document.querySelector(selector);
 let state, storageAvailable = true;
 try { state = restoreState(JSON.parse(localStorage.getItem(STORAGE_KEY))); }
@@ -8,6 +9,8 @@ let reactionTimeout, toastTimeout, sleepEffectInterval, playInterval, playClock,
 const starTimeouts = new Set();
 const cooldowns = new Map();
 let audioContext;
+const storyQueue = [];
+let storyReturnAlbum = false, selectedTopic = null;
 
 function save() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); storageAvailable = true; }
@@ -80,6 +83,9 @@ function render() {
   $('#wish-count').textContent = `${complete} / ${plan.length}`;
   $('#wish-reward').textContent = state.daily.claimed ? '今天的 20 颗星星糖，已经收好啦' : '完成心愿 · 获得 20 颗星星糖';
   $('#sprite').classList.toggle('sleeping', state.sleeping);
+  const memories = state.journey.memories;
+  $('#album-count').textContent = memories.length;
+  $('#album-summary').textContent = memories.length ? `最近记下：${memoryDefinitions[memories.at(-1).id].title}` : '从今天开始，慢慢记下。';
 }
 function toast(message) {
   clearTimeout(toastTimeout);
@@ -123,18 +129,18 @@ function react(type, duration = 2100) {
   $('#sprite').className = `sprite ${type}`;
   reactionTimeout = setTimeout(() => $('#sprite').className = `sprite${state.sleeping ? ' sleeping' : ''}`, duration);
 }
-function act(action, point, gameScore = 0) {
+function act(action, point, gameScore = 0, selection = null) {
   const wait = { greet: 3000, pet: 650, feed: 2400, wash: 2200, gift: 1500, sleep: 450 }[action] || 0;
   const now = Date.now();
-  if (now - (cooldowns.get(action) || 0) < wait) { if (action === 'greet') toast('让啵啵把上一句话说完，再继续聊吧。'); return; }
+  if (now - (cooldowns.get(action) || 0) < wait) { if (action === 'greet') toast('让啵啵把上一句话说完，再继续聊吧。'); return null; }
   applyElapsed(state, now);
-  const result = care(state, action, gameScore);
-  if (!result.ok) { speak(result.message); toast(result.message); return; }
+  const result = selection ? chat(state, selection.topic, selection.choice, now) : care(state, action, gameScore, now);
+  if (!result.ok) { speak(result.message); toast(result.message); return null; }
   cooldowns.set(action, now);
   if (action === 'greet') setTimeout(render, wait + 10);
   const level = friendship(state.xp).level;
   switch (action) {
-    case 'greet': react('greeting', 850); speak(greeting(level, state.name)); break;
+    case 'greet': react('greeting', 850); speak(result.reply || greeting(level, state.name)); break;
     case 'pet': react('happy', 1300); effect('heart', 5, point); speak(petLines[Math.floor(Math.random() * petLines.length)]); break;
     case 'feed': react('eating', 2500); effect('star', 4); speak(level < 4 ? '谢谢，点心我收下了。' : '这块给我的？嗯……草莓挑得还不错。'); break;
     case 'wash': react('washing', 2200); effect('bubble', 16); speak('泡泡别弄进眼睛。水温倒是刚刚好。'); break;
@@ -150,16 +156,124 @@ function act(action, point, gameScore = 0) {
   sound(action === 'sleep' ? 'sleep' : 'soft');
   render(); save();
   if (result.levelUp) {
-    speak(stageFor(level).opening);
+    if (!selection) speak(stageFor(level).opening);
     const unlocked = { 2: '聊天和接星星已开放。', 3: '可以带点心、送礼物和陪伴休息。', 4: '现在可以轻轻摸摸。', 5: '现在可以帮忙洗香香了。' }[level] || '又熟悉了一点。';
     toast(`关系变成「${friendship(state.xp).title}」。${unlocked}`);
   }
+  storyQueue.push(...result.storyStages);
+  flushStories();
   if (result.dailyReward) setTimeout(() => toast('今天的小心愿完成啦！收下 20 颗星星糖。'), result.levelUp ? 3400 : 400);
+  return result;
+}
+
+function icon(name) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', `#i-${name}`); svg.append(use); svg.setAttribute('aria-hidden', 'true'); return svg;
+}
+function contact() {
+  if (friendship(state.xp).level === 1) act('greet'); else openChat();
+}
+function openChat() {
+  applyElapsed(state); render(); save();
+  if (state.sleeping) { toast('等啵啵醒了，再慢慢聊吧。'); return; }
+  if (friendship(state.xp).level < 2) { act('greet'); return; }
+  if (Date.now() - (cooldowns.get('greet') || 0) < 3000) { toast('让啵啵把上一句话说完，再继续聊吧。'); return; }
+  selectedTopic = null;
+  $('#chat-title').textContent = '今天，聊些什么？';
+  $('#chat-intro').textContent = '选一个小话题。想好再说也可以。';
+  $('#chat-topics').replaceChildren();
+  $('#chat-topics').hidden = false; $('#chat-choices').hidden = true; $('#chat-answer').hidden = true;
+  for (const topic of topics) {
+    const button = document.createElement('button'); button.className = 'topic-button';
+    const label = document.createElement('span'); label.textContent = topic.title;
+    button.append(icon(topic.icon), label);
+    button.addEventListener('click', () => chooseTopic(topic)); $('#chat-topics').append(button);
+  }
+  $('#chat-dialog').showModal();
+}
+function chooseTopic(topic) {
+  selectedTopic = topic;
+  $('#chat-title').textContent = topic.title;
+  $('#chat-intro').textContent = topic.prompt;
+  $('#chat-topics').hidden = true; $('#chat-choices').hidden = false;
+  $('#chat-choices').replaceChildren();
+  for (const choice of topic.choices) {
+    const button = document.createElement('button'); button.className = 'choice-button'; button.textContent = choice.label;
+    button.addEventListener('click', () => {
+      if (selectedTopic !== topic || $('#chat-choices').hidden) return;
+      const result = act('greet', null, 0, { topic: topic.id, choice: choice.id });
+      if (!result) return;
+      $('#chat-choices').hidden = true; $('#chat-answer').hidden = false;
+      $('#chat-intro').textContent = `你说：${choice.label}`;
+      $('#chat-reply').textContent = result.reply;
+      $('#chat-saved').textContent = result.added.includes(`chat-${topic.id}`) ? '这段小对话，已经放进回忆小册。' : '这句话，啵啵记住了。';
+      $('#chat-done').focus();
+    }); $('#chat-choices').append(button);
+  }
+  const back = document.createElement('button'); back.className = 'text-button'; back.textContent = '换个话题';
+  back.addEventListener('click', () => { $('#chat-dialog').close(); openChat(); }); $('#chat-choices').append(back);
+  $('#chat-choices button').focus();
+}
+function showStory(stage, returnAlbum = false) {
+  const story = stories[stage - 1]; if (!story) return;
+  storyReturnAlbum = returnAlbum;
+  $('#story-title').textContent = story.title; $('#story-scene').textContent = story.scene;
+  $('#story-quote').textContent = story.quote.replace('我叫啵啵', `我叫${state.name}`);
+  $('#story-unlock').textContent = story.unlock; $('#story-number').textContent = String(stage).padStart(2, '0');
+  $('#story-icon use').setAttribute('href', `#i-${story.icon}`);
+  $('#story-done').textContent = returnAlbum ? '回到回忆小册' : '回到小房间';
+  $('#story-dialog').showModal(); $('#story-done').focus();
+}
+function flushStories() {
+  if (!storyQueue.length || document.querySelector('dialog[open]')) return;
+  showStory(storyQueue.shift());
+}
+function openAlbum() {
+  const grid = $('#memory-grid'); grid.replaceChildren();
+  const memories = [...state.journey.memories].reverse();
+  if (!memories.length) {
+    const empty = document.createElement('div'); empty.className = 'album-empty';
+    const title = document.createElement('h3'); title.textContent = '这一页，等你们来写';
+    const note = document.createElement('p'); note.textContent = '打个招呼、聊聊今天，或者一起接一局星星。新的小事会慢慢留下来。';
+    empty.append(icon('heart'), title, note); grid.append(empty);
+  }
+  memories.forEach((memory, i) => {
+    const definition = memoryDefinitions[memory.id], card = document.createElement('article'); card.className = 'memory-card';
+    const illustration = document.createElement('div'); illustration.className = `memory-art art-${definition.icon}`;
+    const number = document.createElement('span'); number.className = 'memory-number'; number.textContent = String(memories.length - i).padStart(2, '0');
+    illustration.append(icon(definition.icon), number);
+    const date = document.createElement('time'); date.dateTime = new Date(memory.at).toISOString();
+    date.textContent = new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric' }).format(memory.at);
+    const title = document.createElement('h3'); title.textContent = definition.title;
+    const note = document.createElement('p'); note.textContent = definition.note;
+    card.append(illustration, date, title, note);
+    if (definition.stage) {
+      const read = document.createElement('button'); read.className = 'memory-read'; read.textContent = '重读这一页 ↗';
+      read.addEventListener('click', () => { $('#album-dialog').close(); showStory(definition.stage, true); }); card.append(read);
+    }
+    grid.append(card);
+  });
+  $('#album-dialog').showModal();
+}
+$('#chat-close').addEventListener('click', () => $('#chat-dialog').close());
+$('#chat-done').addEventListener('click', () => $('#chat-dialog').close());
+$('#story-close').addEventListener('click', () => $('#story-dialog').close());
+$('#story-done').addEventListener('click', () => $('#story-dialog').close());
+$('#story-dialog').addEventListener('close', () => {
+  const returnToAlbum = storyReturnAlbum; storyReturnAlbum = false;
+  if (returnToAlbum) openAlbum(); else flushStories();
+});
+$('#story-open').addEventListener('click', () => showStory(Math.min(5, friendship(state.xp).level)));
+$('#album-open').addEventListener('click', openAlbum);
+$('#album-close').addEventListener('click', () => $('#album-dialog').close());
+for (const selector of ['#chat-dialog', '#album-dialog', '#play-dialog', '#settings-dialog', '#help-dialog']) {
+  $(selector).addEventListener('close', () => queueMicrotask(flushStories));
 }
 
 document.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
   const action = button.dataset.action;
-  if (action === 'play') openPlay(); else act(action);
+  if (action === 'play') openPlay(); else if (action === 'greet') contact(); else act(action);
 }));
 $('#gift-button').addEventListener('click', () => act('gift'));
 let pointer = null, travel = 0, stroked = false;
@@ -181,11 +295,11 @@ $('#character').addEventListener('pointermove', event => {
 });
 $('#character').addEventListener('pointerup', event => {
   if (pointer?.id !== event.pointerId) return;
-  if (!stroked) { const bounds = $('#room').getBoundingClientRect(); act(canInteract(state, 'pet').ok ? 'pet' : 'greet', { x: event.clientX - bounds.left, y: event.clientY - bounds.top }); }
+  if (!stroked) { const bounds = $('#room').getBoundingClientRect(); if (canInteract(state, 'pet').ok) act('pet', { x: event.clientX - bounds.left, y: event.clientY - bounds.top }); else contact(); }
   pointer = null;
 });
 $('#character').addEventListener('pointercancel', () => pointer = null);
-$('#character').addEventListener('click', event => { if (event.detail === 0) act(canInteract(state, 'pet').ok ? 'pet' : 'greet'); });
+$('#character').addEventListener('click', event => { if (event.detail === 0) { if (canInteract(state, 'pet').ok) act('pet'); else contact(); } });
 $('#sound-button').addEventListener('click', () => { state.sound = !state.sound; render(); save(); sound(); toast(state.sound ? '轻轻的音效，已开启' : '音效已关闭'); });
 $('#room-toggle').addEventListener('click', () => { state.night = !state.night; render(); save(); });
 $('#settings-button').addEventListener('click', () => { $('#name-input').value = state.name; $('#settings-dialog').returnValue = 'cancel'; $('#settings-dialog').showModal(); });
@@ -262,7 +376,12 @@ $('#play-close').addEventListener('click', () => $('#play-dialog').close());
 $('#play-dialog').addEventListener('close', () => { const cancelled = gameRunning; clearGame(); if (cancelled) toast('这次先休息一下，随时可以再玩。'); });
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { if (gameRunning) $('#play-dialog').close(); save(); }
-  else { applyElapsed(state); render(); save(); }
+  else {
+    applyElapsed(state); render();
+    const continued = !state.sleeping && followup(state, friendship(state.xp).level, dayKey());
+    if (continued) { speak(continued); state.journey.followupDay = dayKey(); }
+    save();
+  }
 });
 window.addEventListener('pagehide', save);
 setInterval(() => { if (document.hidden) return; applyElapsed(state); render(); save(); }, 5000);
@@ -270,7 +389,11 @@ render(); save();
 if (state.sleeping) {
   speak('我还在休息。醒了再聊吧。');
   sleepEffectInterval = setInterval(() => { if (!document.hidden) effect('sleep', 2); }, 2400);
-} else speak(stageFor(friendship(state.xp).level).opening);
+} else {
+  const continued = followup(state, friendship(state.xp).level, dayKey());
+  speak(continued || stageFor(friendship(state.xp).level).opening);
+  if (continued) { state.journey.followupDay = dayKey(); save(); }
+}
 if (!storageAvailable) toast('浏览器暂时不能保存进度。当前页面仍然可以玩。');
 const checkImage = new Image(); checkImage.src = './assets/character.webp';
 checkImage.onerror = () => { speak('角色图片暂时没加载好，刷新一下再见面吧。'); toast('角色素材加载失败，请检查网络后刷新。'); };

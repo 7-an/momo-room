@@ -1,3 +1,4 @@
+import { freshJourney, restoreJourney, rememberAction, chatReply, rememberChat } from './journey.js?v=20261005b';
 export const STORAGE_KEY = 'momo-room-v1';
 export const DEFAULT_NAME = '啵啵';
 export const ACTION_LEVELS = { greet: 1, play: 2, feed: 3, gift: 3, sleep: 3, pet: 4, wash: 5 };
@@ -8,7 +9,7 @@ export const dayKey = (now = Date.now()) => {
 };
 const number = (value, fallback, max = 100) => typeof value === 'number' && Number.isFinite(value) ? clamp(value, 0, max) : fallback;
 export function freshState(now = Date.now()) {
-  return { version: 1, name: DEFAULT_NAME, food: 75, joy: 80, energy: 90, xp: 0, coins: 0, sleeping: false, night: false, sound: false, createdAt: now, updatedAt: now, daily: { day: dayKey(now), stage: 1, greet: 0, pet: 0, feed: 0, play: 0, claimed: false } };
+  return { version: 1, name: DEFAULT_NAME, food: 75, joy: 80, energy: 90, xp: 0, coins: 0, sleeping: false, night: false, sound: false, createdAt: now, updatedAt: now, journey: freshJourney(), daily: { day: dayKey(now), stage: 1, greet: 0, pet: 0, feed: 0, play: 0, claimed: false } };
 }
 export function restoreState(raw, now = Date.now()) {
   const state = freshState(now);
@@ -19,7 +20,9 @@ export function restoreState(raw, now = Date.now()) {
   if (typeof raw.name === 'string' && raw.name.trim()) state.name = Array.from(raw.name.trim()).slice(0, 12).join('');
   // Upgrade the original default name without resetting progress or custom names.
   if (state.name === '小糯') state.name = DEFAULT_NAME;
+  state.journey = restoreJourney(raw.journey, now);
   for (const key of ['createdAt', 'updatedAt']) state[key] = number(raw[key], now, now) || now;
+  state.daily.stage = Math.min(5, friendship(state.xp).level);
   if (raw.daily?.day === dayKey(now)) {
     for (const key of ['greet', 'pet', 'feed', 'play']) state.daily[key] = number(raw.daily[key], 0, 999);
     state.daily.claimed = raw.daily.claimed === true;
@@ -60,7 +63,7 @@ export function dailyPlan(state) {
   if (stage === 3) return [{ key: 'greet', target: 3, label: '聊 3 次天' }, { key: 'feed', target: 1, label: '带一份小点心' }, { key: 'play', target: 1, label: '一起接一次星星' }];
   return [{ key: 'pet', target: 5, label: '收到 5 次摸摸' }, { key: 'feed', target: 1, label: '吃一份小点心' }, { key: 'play', target: 1, label: '一起接一次星星' }];
 }
-export function care(state, action, score = 0) {
+export function care(state, action, score = 0, now = Date.now()) {
   const access = canInteract(state, action);
   if (!access.ok) return access;
   if (state.sleeping && action !== 'sleep') return { ok: false, message: '嘘，我才刚睡着。等醒了再陪你。' };
@@ -78,5 +81,16 @@ export function care(state, action, score = 0) {
   const completed = dailyPlan(state).every(({ key, target }) => state.daily[key] >= target);
   let dailyReward = false;
   if (completed && !state.daily.claimed) { state.daily.claimed = true; state.coins += 20; dailyReward = true; }
-  return { ok: true, dailyReward, levelUp: friendship(state.xp).level > beforeLevel };
+  const afterLevel = friendship(state.xp).level;
+  // Waking up isn't a new sleep memory.
+  const memories = action === 'sleep' && !state.sleeping ? { storyStages: [], added: [] } : rememberAction(state, action, beforeLevel, afterLevel, now);
+  return { ok: true, dailyReward, levelUp: afterLevel > beforeLevel, ...memories };
+}
+export function chat(state, topic, choice, now = Date.now()) {
+  const reply = chatReply(friendship(state.xp).level, topic, choice);
+  if (!reply) return { ok: false, message: '先打个招呼，熟悉一点再聊吧。' };
+  const result = care(state, 'greet', 0, now);
+  if (!result.ok) return result;
+  if (rememberChat(state, topic, choice, now)) result.added.push(`chat-${topic}`);
+  return { ...result, reply };
 }
