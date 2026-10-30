@@ -1,9 +1,9 @@
-import { applyElapsed, friendship, canInteract } from '../core/index.js?v=20261029a';
-import { state, save } from './session.js?v=20261029a';
-import { render } from './render.js?v=20261029a';
-import { $, toast, speak } from './dom.js?v=20261029a';
-import { sound } from './audio.js?v=20261029a';
-import { act } from './actions.js?v=20261029a';
+import { applyElapsed, friendship, canInteract, canMeet } from '../core/index.js?v=20261030c';
+import { state, save, worldNow } from './session.js?v=20261030c';
+import { render } from './render.js?v=20261030c';
+import { $, toast, speak } from './dom.js?v=20261030c';
+import { sound } from './audio.js?v=20261030c';
+import { act } from './actions.js?v=20261030c';
 
 // 15-second star catching. Rewards are settled once, only when the timer runs out.
 const starTimeouts = new Set();
@@ -18,6 +18,8 @@ export function openPlay() {
   applyElapsed(state); render(); save();
   const access = canInteract(state, 'play');
   if (!access.ok) { speak(access.message); toast(access.message); return; }
+  const meet = canMeet(state, 'play', worldNow());
+  if (!meet.ok) { toast(meet.message); return; }
   if (state.sleeping) { const message = '嘘，我才刚睡着。等醒了再陪你。'; speak(message); toast(message); return; }
   if (state.energy < 30) { const message = '先让我打个盹。醒了再比，免得你占便宜。'; speak(message); toast(message); return; }
   clearGame(); score = 0;
@@ -63,7 +65,8 @@ function startGame() {
 function finishGame() {
   if (!gameRunning) return;
   clearGame(); $('#play-time').textContent = '完成啦';
-  act('play', null, score);
+  // She was there when the game began; a schedule change mid-game doesn't cancel the reward.
+  act('play', { score, checkMeet: false });
   const intro = $('#play-intro'); intro.style.display = 'flex';
   intro.innerHTML = `<span>✦</span><h3>不错嘛，${score} 颗星星。</h3><p>获得 ${score} 颗星星糖。先收好，下次再比一局。</p><button class="primary-button" id="play-done">回到小房间</button>`;
   $('#play-done').addEventListener('click', () => $('#play-dialog').close());

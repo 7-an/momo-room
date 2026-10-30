@@ -2,14 +2,17 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f6efe4">
-  <meta name="description" content="啵啵的房间。从一句你好开始，随着关系熟悉逐步开放聊天、陪玩和照顾。">
-  <title>啵啵的房间 · 虚拟陪伴小游戏</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6e6cf">
+  <meta name="description" content="啵啵的房间。一个跟着真实时间过日子的小镇：从一句你好开始，慢慢认识她。">
+  <title>啵啵的房间 · 糖霜小镇</title>
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="./assets/character.webp" as="image" type="image/webp" fetchpriority="high">
-  <link rel="stylesheet" href="./style.css?v=20261029a">
-  <script src="./app.js?v=20261029a" type="module"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&amp;display=swap">
+  <link rel="stylesheet" href="./style.css?v=20261030c">
+  <script src="./app.js?v=20261030c" type="module"></script>
 </head>
 <body>
   <svg class="svg-defs" aria-hidden="true"><defs>
@@ -19,61 +22,204 @@
     <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 13.1A9 9 0 0 1 10.9 3 9 9 0 1 0 21 13.1Z"/></symbol>
     <symbol id="i-clean" viewBox="0 0 24 24"><path d="M3 12h18v3a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7v-3Zm2 0V5a3 3 0 0 1 6 0M1 15h22"/><circle cx="17" cy="5" r="2"/><path d="M20 9h.01"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-.5 3-2.5 1-2.5-1.5-2 3.5L4 11v2l-2.5 2 2 3.5L6 17l2.5 1 .5 3h4l.5-3 2.5-1 2.5 1.5 2-3.5-2.5-2v-2l2.5-2-2-3.5L16 7l-2.5-1-.5-3H9Z"/><circle cx="11" cy="12" r="3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
     <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5V4Zm4 4a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/></symbol>
     <symbol id="i-gift" viewBox="0 0 24 24"><path d="M3 8h18v4H3V8Zm2 4v10h14V12M12 8v14"/><path d="M12 8C3 8 5 0 9 3l3 5Zm0 0c9 0 7-8 3-5l-3 5Z"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
     <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m9 4-6 2v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14m6-12v14"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z"/><path d="M19 19v2H6"/><path d="M12 8.5c-1-1.6-4-1-3 1.4L12 13l3-3.1c1-2.4-2-3-3-1.4Z"/></symbol>
+    <symbol id="i-album" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="15" rx="3"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 9"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 14.5c1.8 2 5.2 2 7 0M9 9.5h.01M15 9.5h.01"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></symbol>
+    <symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 21h16M5 21v-7h14v7M5 14c0-2 2-3 3.5-3S11 12 12 12s2-1 3.5-1S19 12 19 14M12 11V7m0-3v.01"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 9h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9Zm13 1h2a2 2 0 0 1 0 4h-2M8 3v3m4-3v3"/></symbol>
+    <symbol id="i-flower" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5a3 3 0 1 1 0-6 3 3 0 1 1 0 6Zm0 5a3 3 0 1 1 0 6 3 3 0 1 1 0-6ZM9.5 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0Zm5 0a3 3 0 1 1 6 0 3 3 0 1 1-6 0Z"/></symbol>
+    <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5m0-1V4a2 2 0 0 0-4 0v6m0 .5V6a2 2 0 0 0-4 0v8a8 8 0 0 0 16 0v-3a2 2 0 0 0-4 0"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11Z"/></symbol>
+    <symbol id="i-noise" viewBox="0 0 24 24"><path d="M11 4 5 9H2v6h3l6 5V4Zm5 5 6 6m0-6-6 6"/></symbol>
+    <symbol id="i-speech" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/><path d="M8 10h8M8 14h5"/></symbol>
+    <symbol id="i-question" viewBox="0 0 24 24"><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/></symbol>
   </defs></svg>
-  <div class="page">
-    <header class="site-header">
-      <a class="brand" href="./" aria-label="啵啵的房间首页"><span class="brand-mark">b<span>✿</span></span><span>啵啵的房间<small>A LITTLE WORLD, JUST FOR YOU</small></span></a>
-      <div class="header-tools"><span class="saved" id="save-status">进度已保存</span><button class="icon-button" id="sound-button" aria-label="开启音效" aria-pressed="false"><svg><use href="#i-sound"/></svg><span class="mute-line"></span></button><button class="icon-button" id="settings-button" aria-label="打开设置"><svg><use href="#i-settings"/></svg></button></div>
-    </header>
-    <main>
-      <div class="intro"><div><span class="eyebrow">YOUR DAILY DOSE OF CUTE</span><h1 id="intro-title">你好，先认识一下<span>。</span></h1><p id="intro-caption">第一次见面，从一句你好开始。</p><p class="fiction-note">此游戏纯为虚构。</p></div><div class="date-pill"><svg><use href="#i-sun"/></svg><span id="day-label">陪伴的第 1 天</span></div></div>
-      <div class="game-layout">
-        <section class="room-card" aria-label="啵啵的互动房间">
-          <div class="room-top"><div class="pet-label"><span class="online-dot"></span><strong class="pet-name">啵啵</strong><span id="level-label">Lv. 1</span></div><div class="room-switch"><button id="room-toggle"><svg><use href="#i-sun"/></svg><span id="room-label">奶油日光</span></button></div></div>
-          <div class="stats" aria-label="小伙伴状态">
-            <div class="stat food"><svg><use href="#i-food"/></svg><div><div class="stat-label"><span>饱饱</span><span id="food-value">75%</span></div><div class="meter" role="progressbar" aria-label="饱食度" aria-valuemin="0" aria-valuemax="100" id="food-meter"><i></i></div></div></div>
-            <div class="stat joy"><svg><use href="#i-heart"/></svg><div><div class="stat-label"><span>开心</span><span id="joy-value">80%</span></div><div class="meter" role="progressbar" aria-label="开心度" aria-valuemin="0" aria-valuemax="100" id="joy-meter"><i></i></div></div></div>
-            <div class="stat energy"><svg><use href="#i-star"/></svg><div><div class="stat-label"><span>元气</span><span id="energy-value">90%</span></div><div class="meter" role="progressbar" aria-label="元气值" aria-valuemin="0" aria-valuemax="100" id="energy-meter"><i></i></div></div></div>
+
+  <div class="app" id="app" data-phase="day" data-place="home" data-weather="sunny">
+    <main class="world">
+      <header class="topbar">
+        <div class="card place-card">
+          <span class="place-icon" aria-hidden="true"><svg><use href="#i-home"/></svg></span>
+          <div><h1 id="place-name">啵啵的房间</h1><p id="place-sub">小镇东街 · 3 号</p></div>
+        </div>
+        <div class="card clock-card" role="group" aria-label="小镇的时间">
+          <div class="clock-main"><strong id="clock">--:--</strong><span id="weather">晴</span></div>
+          <span class="clock-divider" aria-hidden="true"></span>
+          <div class="clock-now"><span>她此刻在</span><strong id="activity">……</strong></div>
+        </div>
+        <div class="top-tools">
+          <div class="card candy" title="星星糖"><svg aria-hidden="true"><use href="#i-star"/></svg><strong id="coin-count">0</strong><span>星星糖</span></div>
+          <button class="round wide-only" id="map-open" aria-label="小镇地图"><svg aria-hidden="true"><use href="#i-map"/></svg></button>
+          <button class="round wide-only" id="guide-open" aria-label="她的喜好图鉴"><svg aria-hidden="true"><use href="#i-book"/></svg><span class="badge" id="guide-badge" hidden></span></button>
+          <button class="round wide-only" id="album-open" aria-label="回忆小册"><svg aria-hidden="true"><use href="#i-album"/></svg><span class="badge quiet" id="album-count">0</span></button>
+          <button class="round" id="sound-button" aria-label="开启音效" aria-pressed="false"><svg aria-hidden="true"><use href="#i-sound"/></svg><span class="mute-line" aria-hidden="true"></span></button>
+          <button class="round" id="settings-button" aria-label="设置"><svg aria-hidden="true"><use href="#i-settings"/></svg></button>
+        </div>
+      </header>
+
+      <section class="stage" id="stage" aria-label="小镇场景">
+        <div class="scene" aria-hidden="true">
+          <div class="sky"><i class="sun"></i><i class="stars"></i><i class="weather-fx"></i></div>
+          <div class="wall"></div>
+          <div class="floor"></div>
+
+          <div class="set set-home">
+            <div class="window"><div class="glass"><i class="town"></i><i class="weather-fx"></i><i class="mullion"></i></div></div>
+            <i class="curtain left"></i><i class="curtain right"></i><i class="rod"></i>
+            <i class="lamp-cord"></i><i class="lamp"></i><i class="lamp-glow"></i>
+            <div class="shelf"><i></i><i></i><i></i></div>
+            <i class="pot"></i><i class="leaves"></i>
+            <i class="rug"></i>
+            <i class="table"></i><i class="cup"></i><i class="cake"></i>
           </div>
-          <div class="room" id="room">
-            <div class="wall-lines"></div><div class="window"><div class="outside"><i></i><b></b></div><div class="window-cross"></div><div class="curtain left"></div><div class="curtain right"></div></div>
-            <div class="wall-art"><span>slow<br>little<br>days.</span><i>✿</i></div><div class="wall-shelf"><div class="book"></div><div class="book second"></div><div class="vase"></div></div>
-            <div class="floor"></div><div class="chair"><div></div></div><div class="plant"><i></i><i></i><i></i><b></b></div><div class="rug"></div><div class="room-toy">✦</div>
-            <div class="speech" id="speech" role="status">你好。请问有什么事吗？</div>
-            <button class="character" id="character" aria-label="向啵啵打招呼，目前不能抚摸"><span class="sprite" id="sprite" role="img" aria-label="浅金卷发、蝴蝶结和蕾丝裙的3D风格啵啵"></span></button>
-            <div class="effects" id="effects" aria-hidden="true"></div><div class="touch-hint" id="touch-hint"><svg><use href="#i-heart"/></svg>还不熟，点一下打个招呼吧</div>
+          <div class="set set-bakery">
+            <div class="window small"><div class="glass"><i class="town"></i><i class="weather-fx"></i><i class="mullion"></i></div></div>
+            <div class="board"><b>今日推荐</b><span>草莓蛋糕</span><span>奶油卷</span></div>
+            <div class="bread-shelf"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="counter"></div>
           </div>
-          <div class="contact-strip"><div><strong>慢慢认识</strong><p id="boundary-note">Lv. 2：可以聊天、一起接星星。</p></div><button data-action="greet" id="greet-button" class="primary-button"><span id="greet-label">打招呼</span></button></div>
-          <div class="actions" aria-label="关系熟悉后逐步开放的互动">
-            <button data-action="play" class="action play"><span><svg><use href="#i-star"/></svg></span><strong>陪玩</strong><small>来比一局</small></button>
-            <button data-action="feed" class="action feed"><span><svg><use href="#i-food"/></svg></span><strong>喂食</strong><small>草莓挑得不错</small></button>
-            <button data-action="sleep" class="action sleep"><span><svg><use href="#i-moon"/></svg></span><strong id="sleep-label">睡觉</strong><small id="sleep-hint">只是闭一下眼</small></button>
-            <button data-action="pet" class="action pet"><span><svg><use href="#i-heart"/></svg></span><strong>摸摸</strong><small>只准摸一下</small></button>
-            <button data-action="wash" class="action wash"><span><svg><use href="#i-clean"/></svg></span><strong>洗香香</strong><small>水温刚刚好</small></button>
+          <div class="set set-books">
+            <div class="bookcase left"><i></i><i></i><i></i><i></i></div>
+            <div class="bookcase right"><i></i><i></i><i></i><i></i></div>
+            <div class="window arch"><div class="glass"><i class="town"></i><i class="weather-fx"></i><i class="mullion"></i></div></div>
+            <i class="armchair"></i><i class="lamp-glow"></i>
+          </div>
+          <div class="set set-park">
+            <i class="hill back"></i><i class="hill front"></i><i class="lake"></i><i class="tree"></i><i class="bench"></i>
+          </div>
+          <div class="set set-flowers">
+            <div class="window small"><div class="glass"><i class="town"></i><i class="weather-fx"></i><i class="mullion"></i></div></div>
+            <div class="buckets"><i></i><i></i><i></i><i></i><i></i></div>
+            <i class="hanging one"></i><i class="hanging two"></i>
+          </div>
+          <div class="set set-hill">
+            <i class="hill back"></i><i class="hill front"></i><i class="telescope"></i>
+          </div>
+        </div>
+
+        <button class="character" id="character" aria-label="向啵啵打招呼"><span class="sprite" id="sprite" role="img" aria-label="浅金卷发、蝴蝶结和蕾丝裙的3D风格啵啵"></span></button>
+        <div class="speech" id="speech" role="status">你好。</div>
+        <div class="absent card" id="absent" hidden>
+          <span class="absent-label">她现在不在这里</span>
+          <strong id="absent-where">……</strong>
+          <button class="primary-button" id="absent-go">去找她</button>
+        </div>
+        <div class="effects" id="effects" aria-hidden="true"></div>
+        <p class="touch-hint" id="touch-hint"></p>
+      </section>
+
+      <nav class="dock" aria-label="互动">
+        <button data-action="greet" id="greet-button" class="dock-btn chat"><svg aria-hidden="true"><use href="#i-chat"/></svg><strong id="greet-label">打招呼</strong><small></small></button>
+        <button data-action="play" class="dock-btn play"><svg aria-hidden="true"><use href="#i-star"/></svg><strong>一起玩</strong><small></small></button>
+        <button data-action="feed" class="dock-btn feed"><svg aria-hidden="true"><use href="#i-food"/></svg><strong>送点心</strong><small></small></button>
+        <button data-action="gift" class="dock-btn gift"><svg aria-hidden="true"><use href="#i-gift"/></svg><strong>送花</strong><small></small></button>
+        <button data-action="sleep" class="dock-btn sleep"><svg aria-hidden="true"><use href="#i-moon"/></svg><strong id="sleep-label">陪她休息</strong><small></small></button>
+        <button data-action="pet" class="dock-btn pet"><svg aria-hidden="true"><use href="#i-heart"/></svg><strong>摸摸</strong><small></small></button>
+        <button data-action="wash" class="dock-btn wash"><svg aria-hidden="true"><use href="#i-clean"/></svg><strong>洗香香</strong><small></small></button>
+      </nav>
+
+      <aside class="side side-left">
+        <section class="card relation-card">
+          <div class="row"><h2 id="friend-title">陌生人</h2><span id="level-label">Lv. 1</span></div>
+          <div class="bar" aria-hidden="true"><i id="xp-fill"></i></div>
+          <p class="muted"><span id="xp-label">0 / 18</span> · <span id="boundary-note">Lv. 2：可以聊天、一起接星星。</span></p>
+          <div class="row small"><span class="muted" id="day-label">陪伴的第 1 天</span><button class="link-button" id="story-open">读读这一页故事</button></div>
+        </section>
+        <section class="card mood-card">
+          <div class="mood-head">
+            <span class="mood-icon" id="mood-icon" aria-hidden="true"><svg><use href="#i-smile"/></svg></span>
+            <div><span class="muted">今天的心情</span><strong id="mood-label">不错</strong><span class="muted" id="mood-why">今天的阳光很好</span></div>
+          </div>
+          <div class="meters">
+            <div class="meter-row"><span>饱饱</span><div class="meter food" id="food-meter" role="progressbar" aria-label="饱食度" aria-valuemin="0" aria-valuemax="100"><i></i></div><b id="food-value">75%</b></div>
+            <div class="meter-row"><span>开心</span><div class="meter joy" id="joy-meter" role="progressbar" aria-label="开心度" aria-valuemin="0" aria-valuemax="100"><i></i></div><b id="joy-value">80%</b></div>
+            <div class="meter-row"><span>元气</span><div class="meter energy" id="energy-meter" role="progressbar" aria-label="元气值" aria-valuemin="0" aria-valuemax="100"><i></i></div><b id="energy-value">90%</b></div>
           </div>
         </section>
-        <aside class="companion-panel">
-          <section class="friend-card"><span class="eyebrow">LITTLE BY LITTLE</span><h2>慢慢，认识彼此</h2><div class="friend-illustration"><span>♡</span><span>✿</span></div><div class="friend-level"><strong id="friend-title">陌生人</strong><span id="xp-label">0 / 18</span></div><div class="xp-track"><i id="xp-fill"></i></div><p id="friend-note">我们还不认识。先打个招呼就好。</p><button class="story-link" id="story-open">读读这一页故事 <span>↗</span></button><div class="coin-label"><span>✦</span><strong id="coin-count">0</strong><span>星星糖</span></div></section>
-          <section class="wish-card"><div class="section-heading"><h2>今天的小心愿</h2><span id="wish-count">0 / 1</span></div><p>只做当前关系允许的事，慢慢来。</p><ul id="wish-list"><li><span class="wish-check"></span><span>打 3 次招呼</span><small>0/3</small></li></ul><div class="wish-reward" id="wish-reward">完成心愿 · 获得 20 颗星星糖</div></section>
-          <button class="gift-card" id="gift-button"><span class="gift-icon"><svg><use href="#i-gift"/></svg></span><span><strong>带一份小礼物</strong><small id="gift-hint">逐渐熟悉后 · Lv. 3 解锁</small></span><span>↗</span></button>
-          <button class="album-card" id="album-open"><span class="album-mark" aria-hidden="true">♡</span><span><strong>我们的回忆小册</strong><small id="album-summary">从今天开始，慢慢记下。</small></span><span class="album-count" id="album-count">0</span></button>
-          <p class="side-note" id="side-note">不着急，先慢慢认识。</p>
-        </aside>
-      </div>
-      <footer><span id="footer-note">从一句你好开始。</span><span>3D 风格虚拟伙伴 · 进度仅保存在本设备</span></footer>
+        <section class="card wish-card">
+          <div class="row"><h2>今天的小心愿</h2><span id="wish-count">0 / 1</span></div>
+          <ul id="wish-list"></ul>
+          <p class="muted" id="wish-reward">完成心愿 · 获得 20 颗星星糖</p>
+        </section>
+      </aside>
+
+      <aside class="side side-right">
+        <section class="card day-card">
+          <h2>她的一天</h2>
+          <ol id="day-list"></ol>
+        </section>
+        <section class="card away-card" id="away-card" hidden>
+          <span class="away-title">你不在的时候</span>
+          <p id="away-text"></p>
+        </section>
+      </aside>
+
+      <p class="fiction-note">此游戏纯为虚构。</p>
     </main>
+
+    <nav class="tabbar" aria-label="主导航">
+      <button id="tab-room" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>房间</button>
+      <button id="tab-map"><svg aria-hidden="true"><use href="#i-map"/></svg>小镇</button>
+      <button id="tab-guide"><svg aria-hidden="true"><use href="#i-book"/></svg>图鉴<span class="badge" id="tab-guide-badge" hidden></span></button>
+      <button id="tab-album"><svg aria-hidden="true"><use href="#i-album"/></svg>回忆</button>
+    </nav>
   </div>
-  <dialog id="settings-dialog"><form method="dialog" class="dialog-content"><button class="dialog-close icon-button" aria-label="关闭设置" value="cancel"><svg><use href="#i-close"/></svg></button><span class="eyebrow">MAKE IT YOURS</span><h2>你们的小房间</h2><label for="name-input">给小伙伴起个名字</label><input id="name-input" maxlength="12" placeholder="啵啵" autocomplete="off"><p>名字最多 12 个字。照顾记录会自动保存在当前浏览器。</p><button type="submit" value="save" class="primary-button">保存名字</button><button type="button" id="help-button" class="text-button">怎么玩？</button></form></dialog>
-  <dialog id="help-dialog"><div class="dialog-content"><button class="dialog-close icon-button" id="help-close" aria-label="关闭说明"><svg><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE GUIDE</span><h2>从陌生人，慢慢认识</h2><p>此游戏纯为虚构。</p><p>Lv. 1 是陌生人，只能打招呼；Lv. 2 开放聊天和接星星；Lv. 3 才能带点心、送礼物和陪伴休息；Lv. 4 才可以摸摸；Lv. 5 最后开放洗香香。</p><p>刚认识时，点击角色或按回车只是打招呼。解锁摸摸之后，才可以在角色身上滑动抚摸。打 3 次招呼即可进入下一阶段，之后每阶段聊 3 次天即可继续熟悉。每次间隔至少 3 秒。</p><p>Lv. 2 起，点击「聊聊天」可以选话题和回答。只有选好回答才会增加亲密度；关闭聊天不影响进度。啵啵会记住最近一次聊天，在另一天回来时接着问一句。</p><p>进入新阶段会出现一页小故事。「我们的回忆小册」记录更新后实际发生的互动与阶段变化，重复互动不会刷出重复回忆；旧存档不会倒填过去的记录。故事和回忆可以随时重读，不额外发奖励。</p><p>点心补充饱食度；泡泡增加开心度；睡觉恢复元气。睡着时点击「叫醒」继续玩。</p><p>陪玩时，在 15 秒内尽量接住星星。触屏点一下，或者用 Tab 和回车接星星。</p><p>照顾啵啵会积累亲密度、升级和星星糖。完成每日心愿还能获得额外星星糖。长时间离开后状态会轻微下降，随时回来都可以。</p><p>本版本使用 3D 渲染角色图像与动作动画。没有录音、账号或跨设备同步。清除浏览器数据会清除进度。</p></div></dialog>
-  <dialog id="play-dialog"><div class="play-content"><div class="play-top"><div><span class="eyebrow">CATCH A LITTLE JOY</span><h2 id="play-title">一起接星星</h2></div><button id="play-close" class="icon-button" aria-label="结束陪玩"><svg><use href="#i-close"/></svg></button></div><div class="play-status"><span>接住 <strong id="play-score">0</strong> 颗</span><span id="play-time">15 秒</span></div><div class="star-field" id="star-field"><div class="play-intro" id="play-intro"><span>✦</span><h3>听说你很会接星星？</h3><p>给你 15 秒。让我看看你的本事。</p><button class="primary-button" id="play-start">开始接星星</button></div></div><p class="play-tip" id="play-tip">点一下发亮的星星就能接住。每颗停留 2.6 秒。</p></div></dialog>
-  <dialog id="chat-dialog" aria-labelledby="chat-title"><div class="dialog-content chat-content"><button class="dialog-close icon-button" id="chat-close" aria-label="关闭聊天"><svg><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE CONVERSATION</span><h2 id="chat-title">今天，聊些什么？</h2><p class="chat-intro" id="chat-intro">选一个小话题。想好再说也可以。</p><div id="chat-topics" class="chat-view"></div><div id="chat-choices" class="chat-view" hidden></div><div id="chat-answer" class="chat-view" hidden><div class="chat-reply"><span class="reply-mark" aria-hidden="true">“</span><p id="chat-reply" role="status"></p></div><p id="chat-saved" class="chat-saved"></p><button class="primary-button" id="chat-done">回到小房间</button></div></div></dialog>
-  <dialog id="story-dialog" aria-labelledby="story-title"><div class="dialog-content story-content"><button class="dialog-close icon-button" id="story-close" aria-label="收起故事"><svg><use href="#i-close"/></svg></button><span class="eyebrow">ANOTHER LITTLE PAGE</span><div class="story-picture" aria-hidden="true"><span class="story-window"></span><svg id="story-icon"><use href="#i-sun"/></svg><span class="story-number" id="story-number">01</span></div><h2 id="story-title">门口的一句你好</h2><p id="story-scene"></p><blockquote id="story-quote"></blockquote><p class="story-unlock" id="story-unlock"></p><button class="primary-button" id="story-done">把这一页收好</button></div></dialog>
-  <dialog id="album-dialog" aria-labelledby="album-title"><div class="dialog-content album-content"><button class="dialog-close icon-button" id="album-close" aria-label="关闭回忆小册"><svg><use href="#i-close"/></svg></button><span class="eyebrow">OUR LITTLE KEEPSAKES</span><h2 id="album-title">那些慢慢熟悉的小事</h2><p class="album-caption">从更新后开始记录，只有发生过的小事才会留下。</p><div class="memory-grid" id="memory-grid"></div><p class="album-footnote">保存在这台设备的浏览器里。重复的小事，也不用反复记。</p></div></dialog>
+
+  <dialog id="map-dialog" class="sheet" aria-labelledby="map-title">
+    <div class="map-layout">
+      <div class="map-head">
+        <div><span class="eyebrow">THE LITTLE TOWN</span><h2 id="map-title">糖霜小镇</h2><p class="muted">按她的作息，她会出现在不同的地方。</p></div>
+        <button class="round" id="map-close" aria-label="关闭地图"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="map-board" id="map-board">
+        <svg class="map-art" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+          <rect width="1000" height="620" fill="#BFE0A8"/>
+          <path d="M0 80q130 30 190-14t210 22 200-44 190 30 210-24V0H0Z" fill="#AED596"/>
+          <path d="M830 0c-30 90 30 150-8 240s-110 120-90 225 90 135 45 155" stroke="#8FCBE8" stroke-width="54" fill="none" stroke-linecap="round"/>
+          <path d="M130 380C230 330 260 250 320 220s130-80 190-90 120 70 150 160-10 130-110 160-220 20-260 15" stroke="#F3E2C2" stroke-width="24" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M290 200c30 70 70 160 100 210" stroke="#F3E2C2" stroke-width="20" fill="none" stroke-linecap="round"/>
+          <path d="M660 290c30-50 50-120 60-190" stroke="#F3E2C2" stroke-width="16" fill="none" stroke-linecap="round" stroke-dasharray="6 12"/>
+          <ellipse cx="420" cy="470" rx="100" ry="52" fill="#8FCBE8"/><ellipse cx="420" cy="470" rx="74" ry="34" fill="#A8D8EE"/>
+          <g fill="#86BE8F"><circle cx="60" cy="190" r="26"/><circle cx="92" cy="220" r="20"/><circle cx="180" cy="560" r="24"/><circle cx="560" cy="560" r="28"/><circle cx="930" cy="520" r="22"/><circle cx="40" cy="520" r="30"/><circle cx="520" cy="380" r="16"/></g>
+        </svg>
+        <div id="map-places"></div>
+      </div>
+      <aside class="map-detail card" id="map-detail" aria-live="polite"></aside>
+    </div>
+  </dialog>
+
+  <dialog id="guide-dialog" class="sheet" aria-labelledby="guide-title">
+    <div class="guide-layout">
+      <div class="map-head">
+        <div><span class="eyebrow">LITTLE THINGS SHE LIKES</span><h2 id="guide-title">她的喜好图鉴</h2><p class="muted">送礼、聊天、留心观察，一条一条把她认识清楚。</p></div>
+        <div class="guide-progress"><span>已发现 <strong id="guide-found">0 / 0</strong></span><div class="bar" aria-hidden="true"><i id="guide-fill"></i></div></div>
+        <button class="round" id="guide-close" aria-label="关闭图鉴"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="guide-tabs" id="guide-tabs" role="tablist" aria-label="图鉴分类"></div>
+      <div class="guide-body">
+        <div class="guide-grid" id="guide-grid"></div>
+        <aside class="guide-detail card" id="guide-detail" aria-live="polite"></aside>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="settings-dialog"><form method="dialog" class="dialog-content"><button class="dialog-close round" aria-label="关闭设置" value="cancel"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span class="eyebrow">MAKE IT YOURS</span><h2>你们的小房间</h2><label for="name-input">给她起个名字</label><input id="name-input" maxlength="12" placeholder="啵啵" autocomplete="off"><p>名字最多 12 个字。<span id="save-status">进度已保存</span>在当前浏览器。</p><button type="submit" value="save" class="primary-button">保存名字</button><button type="button" id="help-button" class="text-button">怎么玩？</button></form></dialog>
+  <dialog id="help-dialog"><div class="dialog-content"><button class="dialog-close round" id="help-close" aria-label="关闭说明"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE GUIDE</span><h2>从陌生人，慢慢认识</h2><p>此游戏纯为虚构。</p><p>小镇跟着你设备上的时间走。她有自己的作息：早上在家，上午去书店，中午在面包坊，下午喝茶，傍晚去湖边，夜里睡觉。你在哪个时间来，就会遇到正在做那件事的她。她不在的时候，打开小镇地图去找她。</p><p>Lv. 1 是陌生人，只能打招呼；Lv. 2 开放聊天、接星星，以及书店和公园；Lv. 3 能带点心、送花、陪她休息，花店也会开门；Lv. 4 才可以摸摸；Lv. 5 最后开放洗香香和观星台。打 3 次招呼进入下一阶段，之后每阶段聊 3 次天就会更熟一点，每次间隔至少 3 秒。</p><p>她睡着的时候，只能小声说句话。点心、洗香香和陪她休息只能在合适的地方做，比如洗香香要回家。</p><p>聊天、送礼、陪玩的时候，她会不经意露出自己的喜好。发现的内容会收进「她的喜好图鉴」，没发现的条目会给一条线索。</p><p>进入新阶段会出现一页小故事。「回忆小册」记录实际发生的互动，重复互动不会刷出重复回忆。陪玩时在 15 秒内尽量接住星星。</p><p>进度只保存在这台设备的浏览器里，没有账号或同步。清除浏览器数据会清除进度。</p></div></dialog>
+  <dialog id="play-dialog"><div class="play-content"><div class="play-top"><div><span class="eyebrow">CATCH A LITTLE JOY</span><h2 id="play-title">一起接星星</h2></div><button id="play-close" class="round" aria-label="结束陪玩"><svg aria-hidden="true"><use href="#i-close"/></svg></button></div><div class="play-status"><span>接住 <strong id="play-score">0</strong> 颗</span><span id="play-time">15 秒</span></div><div class="star-field" id="star-field"><div class="play-intro" id="play-intro"><span>✦</span><h3>一起玩一小局接星星？</h3><p>15 秒，试试能接住多少颗。</p><button class="primary-button" id="play-start">开始接星星</button></div></div><p class="play-tip">点一下发亮的星星就能接住。每颗停留 2.6 秒。</p></div></dialog>
+  <dialog id="chat-dialog" aria-labelledby="chat-title"><div class="dialog-content chat-content"><button class="dialog-close round" id="chat-close" aria-label="关闭聊天"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span class="eyebrow">A LITTLE CONVERSATION</span><h2 id="chat-title">今天，聊些什么？</h2><p class="chat-intro" id="chat-intro">选一个小话题。想好再说也可以。</p><div id="chat-topics" class="chat-view"></div><div id="chat-choices" class="chat-view" hidden></div><div id="chat-answer" class="chat-view" hidden><div class="chat-reply"><span class="reply-mark" aria-hidden="true">“</span><p id="chat-reply" role="status"></p></div><p id="chat-saved" class="chat-saved"></p><button class="primary-button" id="chat-done">好</button></div></div></dialog>
+  <dialog id="story-dialog" aria-labelledby="story-title"><div class="dialog-content story-content"><button class="dialog-close round" id="story-close" aria-label="收起故事"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span class="eyebrow">ANOTHER LITTLE PAGE</span><div class="story-picture" aria-hidden="true"><span class="story-window"></span><svg id="story-icon"><use href="#i-sun"/></svg><span class="story-number" id="story-number">01</span></div><h2 id="story-title">门口的一句你好</h2><p id="story-scene"></p><blockquote id="story-quote"></blockquote><p class="story-unlock" id="story-unlock"></p><button class="primary-button" id="story-done">把这一页收好</button></div></dialog>
+  <dialog id="album-dialog" aria-labelledby="album-title"><div class="dialog-content album-content"><button class="dialog-close round" id="album-close" aria-label="关闭回忆小册"><svg aria-hidden="true"><use href="#i-close"/></svg></button><span class="eyebrow">OUR LITTLE KEEPSAKES</span><h2 id="album-title">那些慢慢熟悉的小事</h2><p class="album-caption">只有发生过的小事才会留下。</p><div class="memory-grid" id="memory-grid"></div><p class="album-footnote">保存在这台设备的浏览器里。重复的小事，也不用反复记。</p></div></dialog>
   <div class="toast" id="toast" role="status"></div>
   <noscript><div class="no-script">请开启 JavaScript 来打招呼、逐步认识啵啵和保存进度。</div></noscript>
 </body>

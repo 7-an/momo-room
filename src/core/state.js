@@ -1,5 +1,6 @@
-import { friendship } from './relationship.js?v=20261029a';
-import { freshJourney, restoreJourney } from './journey.js?v=20261029a';
+import { friendship } from './relationship.js?v=20261030c';
+import { freshJourney, restoreJourney } from './journey.js?v=20261030c';
+import { placeById } from '../content/town.js?v=20261030c';
 export const STORAGE_KEY = 'momo-room-v1';
 export const DEFAULT_NAME = '啵啵';
 // `version` stays 1 so the previous release can still read this save after a rollback.
@@ -15,22 +16,36 @@ const number = (value, fallback, max = 100) => typeof value === 'number' && Numb
 const DISCOVERY_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function freshState(now = Date.now()) {
-  return { version: SAVE_VERSION, schema: SAVE_SCHEMA, name: DEFAULT_NAME, food: 75, joy: 80, energy: 90, xp: 0, coins: 0, sleeping: false, night: false, sound: false, createdAt: now, updatedAt: now, journey: freshJourney(), discoveries: [], daily: { day: dayKey(now), stage: 1, greet: 0, pet: 0, feed: 0, play: 0, claimed: false } };
+  return { version: SAVE_VERSION, schema: SAVE_SCHEMA, name: DEFAULT_NAME, food: 75, joy: 80, energy: 90, xp: 0, coins: 0, sleeping: false, night: false, sound: false, createdAt: now, updatedAt: now, journey: freshJourney(), discoveries: [], world: { place: 'home', seen: 0 }, daily: { day: dayKey(now), stage: 1, greet: 0, pet: 0, feed: 0, play: 0, claimed: false } };
 }
 // Each step upgrades one schema to the next without touching fields it doesn't own.
 const migrations = {
-  // Schema 2 adds the list of persona facts the player has discovered. Nothing to backfill.
-  1: raw => ({ ...raw, schema: 2, discoveries: [] })
+  // Schema 2 adds the persona facts the player has discovered and where in town the player is.
+  // Nothing to backfill: an older save starts at her home with an empty guide.
+  1: raw => ({ ...raw, schema: 2, discoveries: [], world: { place: 'home', seen: 0 } })
 };
 export function migrate(raw) {
   let data = raw, schema = Number.isInteger(raw.schema) && raw.schema >= 1 ? raw.schema : 1;
   while (schema < SAVE_SCHEMA) { data = migrations[schema](data); schema++; }
   return data;
 }
-export function restoreDiscoveries(raw) {
+export function restoreDiscoveries(raw, now = Date.now()) {
   if (!Array.isArray(raw)) return [];
-  // Keep ids the current persona doesn't know yet, so editing persona data never erases progress.
-  return [...new Set(raw.filter(id => typeof id === 'string' && id.length <= 48 && DISCOVERY_ID.test(id)))].slice(0, 300);
+  const seen = new Set(), out = [];
+  for (const item of raw) {
+    // Early schema-2 builds stored bare ids; read them as discovered "now".
+    const entry = typeof item === 'string' ? { id: item, at: now } : item;
+    if (!entry || typeof entry.id !== 'string' || entry.id.length > 48 || !DISCOVERY_ID.test(entry.id) || seen.has(entry.id)) continue;
+    if (!Number.isFinite(entry.at) || entry.at <= 0 || entry.at > now) continue;
+    // Keep ids the current persona doesn't know yet, so editing persona data never erases progress.
+    seen.add(entry.id); out.push({ id: entry.id, at: entry.at });
+  }
+  return out.slice(0, 300);
+}
+// `place`: where in town the player is. `seen`: how many discoveries the player has already looked at.
+export function restoreWorld(raw) {
+  const place = typeof raw?.place === 'string' && placeById(raw.place) ? raw.place : 'home';
+  return { place, seen: Math.floor(number(raw?.seen, 0, 300)) };
 }
 export function restoreState(input, now = Date.now()) {
   const state = freshState(now);
@@ -43,7 +58,10 @@ export function restoreState(input, now = Date.now()) {
   // Upgrade the original default name without resetting progress or custom names.
   if (state.name === '小糯') state.name = DEFAULT_NAME;
   state.journey = restoreJourney(raw.journey, now);
-  state.discoveries = restoreDiscoveries(raw.discoveries);
+  state.discoveries = restoreDiscoveries(raw.discoveries, now);
+  state.world = restoreWorld(raw.world);
+  // A place that isn't open at this relationship (an edited save, say) sends the player home.
+  if ((placeById(state.world.place)?.level ?? 99) > friendship(state.xp).level) state.world.place = 'home';
   for (const key of ['createdAt', 'updatedAt']) state[key] = number(raw[key], now, now) || now;
   state.daily.stage = Math.min(5, friendship(state.xp).level);
   if (raw.daily?.day === dayKey(now)) {

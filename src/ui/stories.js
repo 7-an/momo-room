@@ -1,7 +1,7 @@
-import { friendship } from '../core/index.js?v=20261029a';
-import { stories, memoryDefinitions } from '../content/journey.js?v=20261029a';
-import { state } from './session.js?v=20261029a';
-import { $, icon } from './dom.js?v=20261029a';
+import { friendship } from '../core/index.js?v=20261030c';
+import { stories, memoryDefinitions } from '../content/journey.js?v=20261030c';
+import { state } from './session.js?v=20261030c';
+import { $, icon } from './dom.js?v=20261030c';
 
 // Stage stories wait here until no other dialog is open, then show one at a time.
 const storyQueue = [];
@@ -14,7 +14,7 @@ export function showStory(stage, returnAlbum = false) {
   $('#story-quote').textContent = story.quote.replace('我叫啵啵', `我叫${state.name}`);
   $('#story-unlock').textContent = story.unlock; $('#story-number').textContent = String(stage).padStart(2, '0');
   $('#story-icon use').setAttribute('href', `#i-${story.icon}`);
-  $('#story-done').textContent = returnAlbum ? '回到回忆小册' : '回到小房间';
+  $('#story-done').textContent = returnAlbum ? '回到回忆小册' : '把这一页收好';
   $('#story-dialog').showModal(); $('#story-done').focus();
 }
 export function flushStories() {
@@ -56,10 +56,9 @@ export function initStories() {
     if (returnToAlbum) openAlbum(); else flushStories();
   });
   $('#story-open').addEventListener('click', () => showStory(Math.min(5, friendship(state.xp).level)));
-  $('#album-open').addEventListener('click', openAlbum);
   $('#album-close').addEventListener('click', () => $('#album-dialog').close());
   // Any other dialog closing may free the way for a waiting story.
-  for (const selector of ['#chat-dialog', '#album-dialog', '#play-dialog', '#settings-dialog', '#help-dialog']) {
+  for (const selector of ['#chat-dialog', '#album-dialog', '#play-dialog', '#settings-dialog', '#help-dialog', '#map-dialog', '#guide-dialog']) {
     $(selector).addEventListener('close', () => queueMicrotask(flushStories));
   }
 }

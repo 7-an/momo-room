@@ -1,4 +1,4 @@
-import { memoryDefinitions, chatReply } from '../content/journey.js?v=20261029a';
+import { memoryDefinitions, chatReply } from '../content/journey.js?v=20261030c';
 // Keepsake memories: fixed ids, deduplicated, never backfilled for older saves.
 export function freshJourney() { return { memories: [], lastChat: null, followupDay: '' }; }
 export function restoreJourney(raw, now) {
