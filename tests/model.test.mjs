@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { freshState, restoreState, care, applyElapsed, friendship, canInteract, dailyPlan } from '../model.js';
+import { freshState, restoreState, care, applyElapsed, friendship, canInteract, dailyPlan } from '../src/core/index.js';
 const now = new Date(2026, 9, 3, 12).getTime();
 assert.equal(freshState(now).name, '啵啵');
 const renamed = restoreState({ ...freshState(now), name: '小糯', xp: 65, coins: 35 }, now);

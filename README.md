@@ -57,13 +57,25 @@ python3 -m http.server 4173 --bind 127.0.0.1
 
 - `index.html`：页面结构、按钮与弹窗。
 - `style.css`：房间、布局、响应式与动画。
-- `app.js`：触摸、音效、存档和接星星小游戏。
-- `model.js`：养成状态、关系阶段、权限检查、离线恢复与每日奖励规则。
-- `dialogue.js`：从陌生到亲近的五阶段对白和页面语气。
-- `journey.js`：阶段剧情、聊天分支、续聊和回忆定义及存档校验。
+- `app.js`：入口。读取存档、接上各界面模块、页面可见时定时更新与保存。
+- `src/core/`：游戏规则，不操作页面，统一从 `src/core/index.js` 导入。
+  - `state.js`：存档结构、`schema` 迁移、恢复校验、离线变化。
+  - `relationship.js`：五个关系阶段、解锁等级与权限检查。
+  - `care.js`：互动结算、每日心愿与聊天结算。
+  - `journey.js`：回忆记录、去重与恢复。
+- `src/content/`：文案。`dialogue.js` 是阶段语气与动作对白；`journey.js` 是阶段剧情、聊天话题与分支、回忆卡片和续聊。
+- `src/persona/`：人设数据。`persona.js` 写喜好、雷点、观点、口头禅和作息；`index.js` 提供校验与查询（喜好匹配、某时刻在做什么、发现记录）。目前内容为占位版本，尚未接入玩法。
+- `src/ui/`：界面。`session.js` 存档读写，`render.js` 画面，`actions.js` 互动反馈，`chat.js` 聊天，`stories.js` 剧情与回忆小册，`play.js` 接星星，`room.js` 按钮与触摸手势，另有 `dom.js`、`audio.js`、`effects.js`。
 - `assets/character.webp`：网页优先加载的压缩四状态角色图。
 - `assets/character.png`：保留的生成原图。
 - `ASSET_PROMPT.md`：角色生成方式与完整提示词。
-- `tests/model.test.mjs`、`tests/journey.test.mjs`：状态、奖励、分支、回忆与存档检查。使用 Node.js 22.7 或更新版本分别运行 `node tests/model.test.mjs` 和 `node tests/journey.test.mjs`。
+- `tests/`：使用 Node.js 22.7 或更新版本逐个运行：`model.test.mjs` 状态与奖励，`journey.test.mjs` 聊天、剧情与回忆，`save.test.mjs` 存档迁移与回滚兼容，`persona.test.mjs` 人设数据校验，`release.test.mjs` 检查所有模块的 `?v=` 缓存版本一致且路径可解析。
+
+## 存档
+
+- 存档键仍为 `momo-room-v1`，`version` 保持 `1`，这样回滚到旧版本时旧代码仍能读取进度。
+- 结构变化记在 `schema` 字段，由 `src/core/state.js` 的 `migrate()` 逐级升级。当前 `schema` 为 2，比之前多了 `discoveries`（玩家已发现的人设喜好 id），旧存档迁移时为空，不补造。
+- 新增结构时：提高 `SAVE_SCHEMA`，在 `migrations` 加一步，在 `freshState()` 与 `restoreState()` 补默认值和校验，并在 `tests/save.test.mjs` 加旧存档用例。
+- 发布前改动任何 JS 都要把所有 `?v=` 一起换新，`release.test.mjs` 会检查漏改。
 
 原始照片仅作生成参考，没有随源码或网站公开。此项目独立于 AI Study Path Triage 学习研究框架。

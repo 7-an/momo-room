@@ -19,3 +19,13 @@ export function greeting(level, name) {
   const lines = greetLines[Math.min(4, level - 1)];
   return lines[Math.floor(Math.random() * lines.length)].replace('我叫啵啵', `我叫${name}`);
 }
+// What she says right after a care action. Closer stages get the teasing variants.
+export const actionLines = {
+  feed: level => level < 4 ? '谢谢，点心我收下了。' : '这块给我的？嗯……草莓挑得还不错。',
+  wash: () => '泡泡别弄进眼睛。水温倒是刚刚好。',
+  gift: level => level < 4 ? '谢谢。我找个花瓶，把它放好。' : '这花嘛，勉强合格。我去找个花瓶。',
+  play: (level, score) => level < 4 ? `${score} 颗星星。谢谢你陪我玩这一局。` : `接住了 ${score} 颗？还不错，下次我可不会让着你。`,
+  sleep: (level, sleeping) => sleeping ? (level < 4 ? '我先休息一会儿。下次再聊吧。' : '我只是闭一下眼。你也早点睡。') : (level < 4 ? '我醒了。要聊一会儿吗？' : '我醒了。……你怎么还坐那么远？'),
+  rename: (level, name) => level < 4 ? `嗯，我叫${name}。` : `${name}？嗯，记得好好叫我的名字。`
+};
+export const unlockNotes = { 2: '聊天和接星星已开放。', 3: '可以带点心、送礼物和陪伴休息。', 4: '现在可以轻轻摸摸。', 5: '现在可以帮忙洗香香了。' };

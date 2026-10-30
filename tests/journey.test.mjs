@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import { freshState, restoreState, care, chat, friendship, dayKey } from '../model.js';
-import { chatReply, topics, followup, memoryDefinitions } from '../journey.js';
+import { freshState, restoreState, care, chat, friendship, dayKey } from '../src/core/index.js';
+import { chatReply, topics, followup, memoryDefinitions } from '../src/content/journey.js';
 const now = new Date(2026, 9, 5, 12).getTime();
 const stranger = freshState(now);
 const untouched = JSON.stringify(stranger);
