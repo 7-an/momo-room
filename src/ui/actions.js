@@ -1,13 +1,13 @@
-import { applyElapsed, friendship, visit } from '../core/index.js?v=20261030d';
-import { stageFor, greeting, petLines, actionLines, unlockNotes, patienceLines, patienceNotes } from '../content/dialogue.js?v=20261030d';
-import { sleepyLines } from '../content/world.js?v=20261030d';
-import { discoverables, SHELVES } from '../persona/index.js?v=20261030d';
-import { state, cooldowns, save, worldNow } from './session.js?v=20261030d';
-import { render } from './render.js?v=20261030d';
-import { $, toast, speak } from './dom.js?v=20261030d';
-import { sound } from './audio.js?v=20261030d';
-import { effect, react, resetPose } from './effects.js?v=20261030d';
-import { queueStories } from './stories.js?v=20261030d';
+import { applyElapsed, friendship, visit } from '../core/index.js?v=20261030e';
+import { stageFor, greeting, petLines, actionLines, unlockNotes, patienceLines, patienceNotes } from '../content/dialogue.js?v=20261030e';
+import { sleepyLines } from '../content/world.js?v=20261030e';
+import { discoverables, SHELVES } from '../persona/index.js?v=20261030e';
+import { state, cooldowns, save, worldNow } from './session.js?v=20261030e';
+import { render } from './render.js?v=20261030e';
+import { $, toast, speak } from './dom.js?v=20261030e';
+import { sound } from './audio.js?v=20261030e';
+import { effect, react, resetPose } from './effects.js?v=20261030e';
+import { queueStories } from './stories.js?v=20261030e';
 
 const waits = { greet: 3000, pet: 650, feed: 2400, wash: 2200, gift: 1500, sleep: 450 };
 const shelfLabel = Object.fromEntries(SHELVES.map(shelf => [shelf.kind, shelf.label]));

@@ -1,15 +1,15 @@
-import { clamp } from './state.js?v=20261030d';
-import { friendship, canInteract } from './relationship.js?v=20261030d';
-import { rememberAction, rememberChat } from './journey.js?v=20261030d';
-import { patienceFor, recordPatience } from './patience.js?v=20261030d';
-import { chatReply } from '../content/journey.js?v=20261030d';
+import { clamp } from './state.js?v=20261030e';
+import { friendship, canInteract } from './relationship.js?v=20261030e';
+import { rememberAction, rememberChat } from './journey.js?v=20261030e';
+import { patienceFor, recordPatience } from './patience.js?v=20261030e';
+import { chatReply } from '../content/journey.js?v=20261030e';
 
 export function dailyPlan(state) {
   const stage = state.daily.stage;
   if (stage === 1) return [{ key: 'greet', target: 3, label: '打 3 次招呼' }];
   if (stage === 2) return [{ key: 'greet', target: 3, label: '聊 3 次天' }, { key: 'play', target: 1, label: '一起接一次星星' }];
   if (stage === 3) return [{ key: 'greet', target: 3, label: '聊 3 次天' }, { key: 'feed', target: 1, label: '带一份小点心' }, { key: 'play', target: 1, label: '一起接一次星星' }];
-  return [{ key: 'pet', target: 5, label: '收到 5 次摸摸' }, { key: 'feed', target: 1, label: '吃一份小点心' }, { key: 'play', target: 1, label: '一起接一次星星' }];
+  return [{ key: 'pet', target: 3, label: '收到 3 次摸摸' }, { key: 'feed', target: 1, label: '吃一份小点心' }, { key: 'play', target: 1, label: '一起接一次星星' }];
 }
 export function care(state, action, score = 0, now = Date.now()) {
   const access = canInteract(state, action);

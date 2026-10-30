@@ -1,9 +1,9 @@
-import { applyElapsed, friendship, canMeet } from '../core/index.js?v=20261030d';
-import { topics } from '../content/journey.js?v=20261030d';
-import { state, save, greetCoolingDown, worldNow } from './session.js?v=20261030d';
-import { render } from './render.js?v=20261030d';
-import { $, toast, icon } from './dom.js?v=20261030d';
-import { act } from './actions.js?v=20261030d';
+import { applyElapsed, friendship, canMeet } from '../core/index.js?v=20261030e';
+import { topics } from '../content/journey.js?v=20261030e';
+import { state, save, greetCoolingDown, worldNow } from './session.js?v=20261030e';
+import { render } from './render.js?v=20261030e';
+import { $, toast, icon } from './dom.js?v=20261030e';
+import { act } from './actions.js?v=20261030e';
 
 let selectedTopic = null;
 // Tapping her: a plain hello while strangers or while she sleeps, a chat otherwise.

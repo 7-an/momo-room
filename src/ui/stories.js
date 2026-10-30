@@ -1,7 +1,7 @@
-import { friendship } from '../core/index.js?v=20261030d';
-import { stories, memoryDefinitions } from '../content/journey.js?v=20261030d';
-import { state } from './session.js?v=20261030d';
-import { $, icon } from './dom.js?v=20261030d';
+import { friendship } from '../core/index.js?v=20261030e';
+import { stories, memoryDefinitions } from '../content/journey.js?v=20261030e';
+import { state } from './session.js?v=20261030e';
+import { $, icon } from './dom.js?v=20261030e';
 
 // Stage stories wait here until no other dialog is open, then show one at a time.
 const storyQueue = [];

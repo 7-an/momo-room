@@ -1,14 +1,14 @@
-import { friendship, canInteract, canMeet, dailyPlan, whereabouts, clockOf, phaseOf, weatherOf, moodOf, patienceFor } from '../core/index.js?v=20261030d';
-import { stageFor } from '../content/dialogue.js?v=20261030d';
-import { memoryDefinitions } from '../content/journey.js?v=20261030d';
-import { placeById } from '../content/town.js?v=20261030d';
-import { persona, minutesOf } from '../persona/index.js?v=20261030d';
-import { state, greetCoolingDown, worldNow } from './session.js?v=20261030d';
-import { $, el } from './dom.js?v=20261030d';
-import { settlePose, syncSleepEffect } from './effects.js?v=20261030d';
+import { friendship, canInteract, canMeet, dailyPlan, whereabouts, clockOf, phaseOf, weatherOf, moodOf, patienceFor } from '../core/index.js?v=20261030e';
+import { stageFor } from '../content/dialogue.js?v=20261030e';
+import { memoryDefinitions } from '../content/journey.js?v=20261030e';
+import { placeById } from '../content/town.js?v=20261030e';
+import { persona, minutesOf } from '../persona/index.js?v=20261030e';
+import { state, greetCoolingDown, worldNow } from './session.js?v=20261030e';
+import { $, el } from './dom.js?v=20261030e';
+import { settlePose, syncSleepEffect } from './effects.js?v=20261030e';
 
 const hints = { greet: '', play: '来比一局', feed: '草莓挑得不错', gift: '10 颗星星糖', sleep: '休息一小会儿', pet: '只准摸一下', wash: '水温刚刚好' };
-// What the button says once she's getting tired of it. `soon`: one or two left before that.
+// What the button says once she's getting tired of it. `soon`: the last one before that.
 const patienceHints = {
   pet: { soon: '快摸够了', enough: '她摸够了', over: '再摸要生气' },
   greet: { enough: '聊得有点多', over: '让她歇会儿' },
@@ -18,7 +18,7 @@ const patienceHints = {
 function patienceHint(action, now) {
   const words = patienceHints[action]; if (!words) return null;
   const { tier, left } = patienceFor(state, action, now);
-  if (tier === 'comfy') return left <= 2 && words.soon ? words.soon : null;
+  if (tier === 'comfy') return left === 1 && words.soon ? words.soon : null;
   return words[tier];
 }
 // Draws the whole page from state and the town clock. Safe to call any time; it never changes state.

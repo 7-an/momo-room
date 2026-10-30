@@ -1,17 +1,17 @@
 // Entry point: load the save, wire up the page, keep the town ticking while visible.
-import { applyElapsed } from './src/core/index.js?v=20261030d';
-import { state, storageAvailable, lastVisitAt, load, save } from './src/ui/session.js?v=20261030d';
-import { render } from './src/ui/render.js?v=20261030d';
-import { toast, speak } from './src/ui/dom.js?v=20261030d';
-import { resetPose } from './src/ui/effects.js?v=20261030d';
-import { initStories } from './src/ui/stories.js?v=20261030d';
-import { initChat } from './src/ui/chat.js?v=20261030d';
-import { initRoom } from './src/ui/room.js?v=20261030d';
-import { initPlay, abandonGame } from './src/ui/play.js?v=20261030d';
-import { initMap } from './src/ui/map.js?v=20261030d';
-import { initGuide } from './src/ui/guide.js?v=20261030d';
-import { initWorld, greetScene, watchSchedule, showAway } from './src/ui/world.js?v=20261030d';
-import { validatePersona } from './src/persona/index.js?v=20261030d';
+import { applyElapsed } from './src/core/index.js?v=20261030e';
+import { state, storageAvailable, lastVisitAt, load, save } from './src/ui/session.js?v=20261030e';
+import { render } from './src/ui/render.js?v=20261030e';
+import { toast, speak } from './src/ui/dom.js?v=20261030e';
+import { resetPose } from './src/ui/effects.js?v=20261030e';
+import { initStories } from './src/ui/stories.js?v=20261030e';
+import { initChat } from './src/ui/chat.js?v=20261030e';
+import { initRoom } from './src/ui/room.js?v=20261030e';
+import { initPlay, abandonGame } from './src/ui/play.js?v=20261030e';
+import { initMap } from './src/ui/map.js?v=20261030e';
+import { initGuide } from './src/ui/guide.js?v=20261030e';
+import { initWorld, greetScene, watchSchedule, showAway } from './src/ui/world.js?v=20261030e';
+import { validatePersona } from './src/persona/index.js?v=20261030e';
 
 load();
 // Persona data is edited by hand; surface mistakes in the console instead of failing quietly.

@@ -3,7 +3,7 @@
 // and beyond that she's had too much: `over` costs her affection, or `refuse` turns it down outright.
 // Windows roll, so patience comes back on its own as time passes.
 export const PATIENCE = {
-  pet: { window: 30, comfy: 6, enough: 3, rate: 0, over: { xp: -3, joy: -6 } },
+  pet: { window: 30, comfy: 3, enough: 2, rate: 0, over: { xp: -3, joy: -6 } },
   greet: { window: 60, comfy: 12, enough: 6, rate: .5, over: { xp: 0, joy: 0 } },
   gift: { window: 24 * 60, comfy: 2, enough: 2, rate: .5, refuse: '今天已经收了好多了。心意我知道，留着下次吧。' },
   wash: { window: 180, comfy: 1, enough: 0, rate: 0, over: { xp: -2, joy: -5 } }

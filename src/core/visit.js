@@ -1,7 +1,7 @@
-import { friendship } from './relationship.js?v=20261030d';
-import { care, chat } from './care.js?v=20261030d';
-import { canMeet, whereabouts } from './world.js?v=20261030d';
-import { discover, matchDiscoveries } from '../persona/index.js?v=20261030d';
+import { friendship } from './relationship.js?v=20261030e';
+import { care, chat } from './care.js?v=20261030e';
+import { canMeet, whereabouts } from './world.js?v=20261030e';
+import { discover, matchDiscoveries } from '../persona/index.js?v=20261030e';
 
 // One interaction in the world: she has to be here and awake enough, then the usual rules apply,
 // then anything she revealed about herself goes into the guide.

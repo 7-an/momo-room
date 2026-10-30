@@ -1,15 +1,15 @@
-import { DEFAULT_NAME, friendship, canInteract, canMeet } from '../core/index.js?v=20261030d';
-import { actionLines } from '../content/dialogue.js?v=20261030d';
-import { state, save, worldNow } from './session.js?v=20261030d';
-import { render } from './render.js?v=20261030d';
-import { $, toast, speak } from './dom.js?v=20261030d';
-import { sound } from './audio.js?v=20261030d';
-import { act } from './actions.js?v=20261030d';
-import { contact } from './chat.js?v=20261030d';
-import { openPlay } from './play.js?v=20261030d';
-import { openMap } from './map.js?v=20261030d';
-import { openGuide } from './guide.js?v=20261030d';
-import { openAlbum } from './stories.js?v=20261030d';
+import { DEFAULT_NAME, friendship, canInteract, canMeet } from '../core/index.js?v=20261030e';
+import { actionLines } from '../content/dialogue.js?v=20261030e';
+import { state, save, worldNow } from './session.js?v=20261030e';
+import { render } from './render.js?v=20261030e';
+import { $, toast, speak } from './dom.js?v=20261030e';
+import { sound } from './audio.js?v=20261030e';
+import { act } from './actions.js?v=20261030e';
+import { contact } from './chat.js?v=20261030e';
+import { openPlay } from './play.js?v=20261030e';
+import { openMap } from './map.js?v=20261030e';
+import { openGuide } from './guide.js?v=20261030e';
+import { openAlbum } from './stories.js?v=20261030e';
 
 // Petting needs the relationship, her being here and awake, and the place to allow it.
 const canPet = () => canInteract(state, 'pet').ok && canMeet(state, 'pet', worldNow()).ok && !state.sleeping;

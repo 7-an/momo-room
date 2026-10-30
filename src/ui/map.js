@@ -1,8 +1,8 @@
-import { whereabouts, placeOpen } from '../core/index.js?v=20261030d';
-import { places, placeById, TOWN_NAME } from '../content/town.js?v=20261030d';
-import { state, worldNow } from './session.js?v=20261030d';
-import { $, el } from './dom.js?v=20261030d';
-import { travel } from './world.js?v=20261030d';
+import { whereabouts, placeOpen } from '../core/index.js?v=20261030e';
+import { places, placeById, TOWN_NAME } from '../content/town.js?v=20261030e';
+import { state, worldNow } from './session.js?v=20261030e';
+import { $, el } from './dom.js?v=20261030e';
+import { travel } from './world.js?v=20261030e';
 
 const ACTION_NAMES = { greet: '聊天', play: '一起玩', feed: '送点心', gift: '送礼物', sleep: '陪她休息', pet: '摸摸', wash: '洗香香' };
 let selected = null;

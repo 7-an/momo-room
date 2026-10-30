@@ -1,9 +1,9 @@
-import { STAGE_TITLES } from '../core/index.js?v=20261030d';
-import { topics } from '../content/journey.js?v=20261030d';
-import { discoverables, SHELVES } from '../persona/index.js?v=20261030d';
-import { state, save } from './session.js?v=20261030d';
-import { render } from './render.js?v=20261030d';
-import { $, el, icon } from './dom.js?v=20261030d';
+import { STAGE_TITLES } from '../core/index.js?v=20261030e';
+import { topics } from '../content/journey.js?v=20261030e';
+import { discoverables, SHELVES } from '../persona/index.js?v=20261030e';
+import { state, save } from './session.js?v=20261030e';
+import { render } from './render.js?v=20261030e';
+import { $, el, icon } from './dom.js?v=20261030e';
 
 const ACTIVITY = { tea: '下午茶的时候', read: '在书店的时候' };
 const ON = { feed: '送点心时', gift: '送礼物时', play: '一起玩的时候', wash: '洗香香时', pet: '摸摸头时', sleep: '陪她休息时', greet: '聊天时' };

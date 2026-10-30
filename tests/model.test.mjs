@@ -42,11 +42,12 @@ state.daily.stage = 4; state.daily.claimed = false;
 care(state, 'feed'); assert.equal(state.food, 95);
 care(state, 'feed'); assert.equal(state.food, 100);
 assert.equal(care(state, 'feed').ok, false);
-for (let i = 0; i < 5; i++) care(state, 'pet');
+for (let i = 0; i < 3; i++) care(state, 'pet');
 const reward = care(state, 'play', 10);
 assert.equal(reward.dailyReward, true);
 const coins = state.coins;
-care(state, 'pet'); assert.equal(state.coins, coins + 1, '每日奖励不能重复领取');
+// Half an hour later her patience is back, so this pet counts in full.
+care(state, 'pet', 0, Date.now() + 31 * 60000); assert.equal(state.coins, coins + 1, '每日奖励不能重复领取');
 care(state, 'sleep');
 const previousXP = state.xp;
 assert.equal(care(state, 'pet').ok, false);

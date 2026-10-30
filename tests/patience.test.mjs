@@ -3,25 +3,23 @@ import { freshState, restoreState, care, chat, visit, friendship, patienceFor, m
 const at = (h, m = 0, s = 0) => new Date(2026, 9, 30, h, m, s).getTime();
 const friend = (xp = 70) => { const s = freshState(at(9)); s.xp = xp; s.joy = 60; return s; };
 
-// Petting: six count fully, three more give nothing, after that it costs affection.
+// Petting: three count fully, two more give nothing, after that it costs affection.
 const petted = friend(100);
 const xps = [];
-for (let i = 0; i < 12; i++) { const before = petted.xp; const result = care(petted, 'pet', 0, at(9, 0, i * 10)); xps.push([result.patience, petted.xp - before]); }
-assert.deepEqual(xps.slice(0, 6).map(x => x[0]), Array(6).fill('comfy'));
-assert.ok(xps.slice(0, 6).every(x => x[1] === 4), '前 6 次正常加好感');
-assert.deepEqual(xps.slice(6, 9), [['enough', 0], ['enough', 0], ['enough', 0]], '摸够了不再加好感');
-assert.deepEqual(xps.slice(9).map(x => x[0]), ['over', 'over', 'over']);
-assert.ok(xps.slice(9).every(x => x[1] === -3), '摸太多扣好感');
-assert.ok(petted.joy < 100 && petted.recent.annoyedAt === at(9, 1, 50));
+for (let i = 0; i < 8; i++) { const before = petted.xp; const result = care(petted, 'pet', 0, at(9, 0, i * 10)); xps.push([result.patience, petted.xp - before]); }
+assert.deepEqual(xps.slice(0, 3), [['comfy', 4], ['comfy', 4], ['comfy', 4]], '前 3 次正常加好感');
+assert.deepEqual(xps.slice(3, 5), [['enough', 0], ['enough', 0]], '摸够了不再加好感');
+assert.deepEqual(xps.slice(5), [['over', -3], ['over', -3], ['over', -3]], '摸太多扣好感');
+assert.ok(petted.joy < 100 && petted.recent.annoyedAt === at(9, 1, 10));
 assert.equal(moodOf(petted, at(9, 2)).why, '刚才被烦到了，有点不高兴');
 assert.notEqual(moodOf(petted, at(9, 40)).why, '刚才被烦到了，有点不高兴', '半小时后不再生气');
 // Patience comes back once the window has passed.
-assert.equal(patienceFor(petted, 'pet', at(9, 31, 50)).tier, 'comfy');
+assert.equal(patienceFor(petted, 'pet', at(9, 31, 10)).tier, 'comfy');
 assert.equal(care(petted, 'pet', 0, at(9, 35)).patience, 'comfy');
 
 // Losing affection never drops a stage that was reached.
 const edge = friend(67); // Lv. 4 starts at 66
-edge.recent.pet = Array.from({ length: 9 }, (_, i) => at(9, 55, i)); // patience already used up
+edge.recent.pet = Array.from({ length: 5 }, (_, i) => at(9, 55, i)); // patience already used up
 for (let i = 0; i < 20; i++) care(edge, 'pet', 0, at(10, 0, i));
 assert.equal(friendship(edge.xp).level, 4, '扣好感不会掉阶段');
 assert.equal(edge.xp, 66);
@@ -66,7 +64,7 @@ assert.deepEqual(junk.recent.pet, [at(8, 50)]); assert.equal(junk.recent.annoyed
 // Pushing past her patience with petting reveals that she dislikes it, once.
 const reveal = friend(); reveal.world.place = 'home';
 let found = [];
-for (let i = 0; i < 10; i++) found = found.concat(visit(reveal, 'pet', { now: at(16, 0, i * 5) }).discovered);
+for (let i = 0; i < 6; i++) found = found.concat(visit(reveal, 'pet', { now: at(16, 0, i * 5) }).discovered);
 assert.ok(found.includes('too-much-touch'));
 assert.equal(found.filter(id => id === 'too-much-touch').length, 1);
 console.log('摸摸、聊天、送礼、洗澡的耐心上限与扣分、不掉阶段、恢复、存档与图鉴联动检查通过。');

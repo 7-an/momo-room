@@ -1,7 +1,7 @@
-import { friendship } from './relationship.js?v=20261030d';
-import { freshJourney, restoreJourney } from './journey.js?v=20261030d';
-import { placeById } from '../content/town.js?v=20261030d';
-import { freshRecent, restoreRecent } from './patience.js?v=20261030d';
+import { friendship } from './relationship.js?v=20261030e';
+import { freshJourney, restoreJourney } from './journey.js?v=20261030e';
+import { placeById } from '../content/town.js?v=20261030e';
+import { freshRecent, restoreRecent } from './patience.js?v=20261030e';
 export const STORAGE_KEY = 'momo-room-v1';
 export const DEFAULT_NAME = '啵啵';
 // `version` stays 1 so the previous release can still read this save after a rollback.

@@ -1,4 +1,4 @@
-import { persona } from './persona.js?v=20261030d';
+import { persona } from './persona.js?v=20261030e';
 // Read-only queries over persona data. Pass another persona object to test alternatives.
 export { persona };
 const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

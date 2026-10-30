@@ -1,6 +1,6 @@
-import { state } from './session.js?v=20261030d';
-import { render } from './render.js?v=20261030d';
-import { toast } from './dom.js?v=20261030d';
+import { state } from './session.js?v=20261030e';
+import { render } from './render.js?v=20261030e';
+import { toast } from './dom.js?v=20261030e';
 // Soft chimes synthesised with Web Audio, so there are no sound files to download.
 let audioContext;
 export function sound(kind = 'soft') {

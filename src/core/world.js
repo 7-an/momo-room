@@ -1,8 +1,8 @@
-import { dayKey } from './state.js?v=20261030d';
-import { friendship } from './relationship.js?v=20261030d';
-import { persona, activityAt } from '../persona/index.js?v=20261030d';
-import { placeById } from '../content/town.js?v=20261030d';
-import { annoyedNow } from './patience.js?v=20261030d';
+import { dayKey } from './state.js?v=20261030e';
+import { friendship } from './relationship.js?v=20261030e';
+import { persona, activityAt } from '../persona/index.js?v=20261030e';
+import { placeById } from '../content/town.js?v=20261030e';
+import { annoyedNow } from './patience.js?v=20261030e';
 
 // The world runs on the player's local clock. Nothing here changes state.
 export const clockOf = (now = Date.now()) => {
