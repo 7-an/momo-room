@@ -1,12 +1,12 @@
-import { friendship, whereabouts, awaySummary, dayKey } from '../core/index.js?v=20261030c';
-import { stageFor } from '../content/dialogue.js?v=20261030c';
-import { followup } from '../content/journey.js?v=20261030c';
-import { arrivalLine } from '../content/world.js?v=20261030c';
-import { placeById } from '../content/town.js?v=20261030c';
-import { state, save, worldNow } from './session.js?v=20261030c';
-import { render } from './render.js?v=20261030c';
-import { $, toast, speak } from './dom.js?v=20261030c';
-import { resetPose } from './effects.js?v=20261030c';
+import { friendship, whereabouts, awaySummary, dayKey } from '../core/index.js?v=20261030d';
+import { stageFor } from '../content/dialogue.js?v=20261030d';
+import { followup } from '../content/journey.js?v=20261030d';
+import { arrivalLine } from '../content/world.js?v=20261030d';
+import { placeById } from '../content/town.js?v=20261030d';
+import { state, save, worldNow } from './session.js?v=20261030d';
+import { render } from './render.js?v=20261030d';
+import { $, toast, speak } from './dom.js?v=20261030d';
+import { resetPose } from './effects.js?v=20261030d';
 
 // What the player last saw her doing, so a change in her schedule gets a fresh line.
 let lastScene = '';

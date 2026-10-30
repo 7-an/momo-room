@@ -12,7 +12,9 @@ assert.deepEqual(upgraded.world, { place: 'home', seen: 0 }, '旧存档从她家
 for (const key of ['name', 'food', 'joy', 'energy', 'xp', 'coins', 'night', 'sound', 'createdAt']) assert.equal(upgraded[key], legacy[key], `迁移保留 ${key}`);
 assert.deepEqual(upgraded.journey, legacy.journey, '迁移保留回忆和续聊');
 assert.deepEqual(upgraded.daily, legacy.daily, '迁移保留当天心愿进度');
-assert.equal(migrate(legacy).schema, 2); assert.equal(legacy.schema, undefined, 'migrate 不修改传入对象');
+assert.equal(migrate(legacy).schema, SAVE_SCHEMA); assert.equal(SAVE_SCHEMA, 3);
+assert.deepEqual(upgraded.recent.pet, [], '旧存档的耐心从零开始');
+assert.deepEqual(restoreState({ ...legacy, schema: 2, discoveries: [], world: { place: 'home', seen: 0 } }, now).recent.greet, [], 'schema 2 存档升级到 3'); assert.equal(legacy.schema, undefined, 'migrate 不修改传入对象');
 
 // The new fields survive a save/load round trip, and bad entries are dropped.
 upgraded.discoveries.push({ id: 'strawberry', at: now - 1000 }, { id: 'future-fact', at: now - 500 });
@@ -46,4 +48,4 @@ for (const key of ['food', 'joy', 'energy', 'xp', 'coins', 'name', 'daily', 'jou
 // Gameplay is unchanged by the migration.
 const player = restoreState(JSON.parse(JSON.stringify(legacy)), now);
 assert.equal(care(player, 'pet', 0, now).ok, true);
-console.log('存档 schema 2 迁移、旧存档保留、发现记录与所在地点清洗、高版本容错与回滚兼容检查通过。');
+console.log('存档 schema 3 迁移、旧存档保留、发现记录与所在地点清洗、高版本容错与回滚兼容检查通过。');

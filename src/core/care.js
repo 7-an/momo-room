@@ -1,7 +1,8 @@
-import { clamp } from './state.js?v=20261030c';
-import { friendship, canInteract } from './relationship.js?v=20261030c';
-import { rememberAction, rememberChat } from './journey.js?v=20261030c';
-import { chatReply } from '../content/journey.js?v=20261030c';
+import { clamp } from './state.js?v=20261030d';
+import { friendship, canInteract } from './relationship.js?v=20261030d';
+import { rememberAction, rememberChat } from './journey.js?v=20261030d';
+import { patienceFor, recordPatience } from './patience.js?v=20261030d';
+import { chatReply } from '../content/journey.js?v=20261030d';
 
 export function dailyPlan(state) {
   const stage = state.daily.stage;
@@ -17,14 +18,28 @@ export function care(state, action, score = 0, now = Date.now()) {
   if (action === 'feed' && state.food >= 97) return { ok: false, message: '已经饱啦。这份先留着，待会儿再给我。' };
   if (action === 'gift' && state.coins < 10) return { ok: false, message: '星星糖还不够呢。陪我接几颗再说。' };
   if (action === 'play' && state.energy < 30) return { ok: false, message: '先让我打个盹。醒了再比，免得你占便宜。' };
+  const patience = patienceFor(state, action, now);
+  if (patience.tier === 'over' && patience.rule.refuse) return { ok: false, patience: 'over', message: patience.rule.refuse };
   const beforeLevel = friendship(state.xp).level;
   // [food, joy, energy, xp, coins]
   const delta = { greet: [0, 2, 0, beforeLevel === 1 ? 6 : 8, 0], pet: [0, 5, 0, 4, 1], feed: [20, 4, 0, 8, 2], wash: [0, 8, -2, 6, 2], gift: [0, 12, 0, 10, -10], play: [-3, 12, -10, 5 + score * 2, score] }[action];
   if (action === 'sleep') state.sleeping = !state.sleeping;
   else if (delta) {
+    // Too much of the same thing: gains shrink, then turn into a small loss.
+    if (patience.tier === 'enough') {
+      delta[1] = Math.round(delta[1] * patience.rule.rate); delta[3] = Math.round(delta[3] * patience.rule.rate);
+      if (delta[4] > 0) delta[4] = Math.round(delta[4] * patience.rule.rate);
+    } else if (patience.tier === 'over') {
+      delta[1] = patience.rule.over.joy; delta[3] = patience.rule.over.xp;
+      if (delta[4] > 0) delta[4] = 0;
+      if (patience.rule.over.xp < 0 || patience.rule.over.joy < 0) state.recent.annoyedAt = now;
+    }
     ['food', 'joy', 'energy'].forEach((key, i) => state[key] = clamp(state[key] + delta[i]));
-    state.xp += delta[3]; state.coins += delta[4];
+    // Losing affection never takes back a stage that was already reached.
+    const floor = state.xp - friendship(state.xp).remaining;
+    state.xp = Math.max(floor, state.xp + delta[3]); state.coins += delta[4];
     if (['greet', 'pet', 'feed', 'play'].includes(action)) state.daily[action]++;
+    recordPatience(state, action, now);
   } else return { ok: false, message: '这个动作暂时还没有准备好。' };
   const completed = dailyPlan(state).every(({ key, target }) => state.daily[key] >= target);
   let dailyReward = false;
@@ -32,7 +47,7 @@ export function care(state, action, score = 0, now = Date.now()) {
   const afterLevel = friendship(state.xp).level;
   // Waking up isn't a new sleep memory.
   const memories = action === 'sleep' && !state.sleeping ? { storyStages: [], added: [] } : rememberAction(state, action, beforeLevel, afterLevel, now);
-  return { ok: true, dailyReward, levelUp: afterLevel > beforeLevel, ...memories };
+  return { ok: true, dailyReward, levelUp: afterLevel > beforeLevel, patience: patience.tier, xpChange: delta ? delta[3] : 0, ...memories };
 }
 export function chat(state, topic, choice, now = Date.now()) {
   const reply = chatReply(friendship(state.xp).level, topic, choice);

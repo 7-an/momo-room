@@ -29,3 +29,22 @@ export const actionLines = {
   rename: (level, name) => level < 4 ? `嗯，我叫${name}。` : `${name}？嗯，记得好好叫我的名字。`
 };
 export const unlockNotes = { 2: '聊天和接星星已开放。', 3: '可以带点心、送礼物和陪伴休息。', 4: '现在可以轻轻摸摸。', 5: '现在可以帮忙洗香香了。' };
+// When something has happened too often: 'enough' (she's had her fill) and 'over' (it's starting to annoy her).
+export const patienceLines = {
+  pet: {
+    enough: ['好啦好啦，头发都要被你揉乱了。', '……够了吧？我又不是小猫。', '手先停一下。'],
+    over: ['够了！头发都乱了……再摸我真的生气了。', '（她躲开了你的手）不要了。', '哼。不理你了。']
+  },
+  greet: {
+    enough: ['嗯……（她有点心不在焉）', '我们今天是不是聊得有点多？'],
+    over: ['今天聊得够多了，让我安静一会儿吧。', '（她没接话，看着窗外。）']
+  },
+  gift: { enough: ['又送？……谢谢。不过不用每次都带东西来。'] },
+  wash: { over: ['刚洗过呀。再洗皮肤都要泡皱了。', '不要再洗了，毛巾都还没干。'] }
+};
+export const patienceNotes = {
+  pet: { enough: '她好像摸够了，这几下没有加好感。', over: '她有点不高兴了。' },
+  greet: { enough: '聊得有点多了，她开始心不在焉。', over: '她想安静一会儿，这几句没有加好感。' },
+  gift: { enough: '今天送过礼物了，这份她只收下一半心意。' },
+  wash: { over: '刚洗过又洗，她有点不高兴了。' }
+};

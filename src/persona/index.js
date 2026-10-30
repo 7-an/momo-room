@@ -1,4 +1,4 @@
-import { persona } from './persona.js?v=20261030c';
+import { persona } from './persona.js?v=20261030d';
 // Read-only queries over persona data. Pass another persona object to test alternatives.
 export { persona };
 const ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -27,6 +27,7 @@ export function validatePersona(data = persona) {
   const found = (rule, where) => {
     if (!rule || !FOUND_EVENTS.includes(rule.on)) errors.push(`${where}.found.on 必须是 ${FOUND_EVENTS.join(' / ')}`);
     else if (rule.on === 'stage' && ![2, 3, 4, 5].includes(rule.stage)) errors.push(`${where}.found.stage 必须是 2–5`);
+    else if (rule.patience && !['comfy', 'enough', 'over'].includes(rule.patience)) errors.push(`${where}.found.patience 必须是 comfy / enough / over`);
   };
   for (const [i, trait] of (data?.traits ?? []).entries()) { checkId(trait.id, `traits[${i}]`); text(trait.label, `traits[${i}].label`); }
   for (const { key } of SHELVES) {
@@ -80,13 +81,13 @@ export function discover(state, id, now = Date.now(), data = persona) {
   state.discoveries.push({ id, at: now }); return true;
 }
 
-// Entries whose `found` rule matches what just happened. `event`: { on, level, topic, choice, activity, stages }.
+// Entries whose `found` rule matches what just happened. `event`: { on, level, topic, choice, activity, patience, stages }.
 export function matchDiscoveries(event, data = persona) {
   return discoverables(data).filter(({ found: rule }) => {
     if (rule.minLevel && event.level < rule.minLevel) return false;
     if (rule.on === 'stage') return event.stages?.includes(rule.stage) ?? false;
     if (rule.on !== event.on) return false;
-    for (const key of ['topic', 'choice', 'activity']) if (rule[key] && rule[key] !== event[key]) return false;
+    for (const key of ['topic', 'choice', 'activity', 'patience']) if (rule[key] && rule[key] !== event[key]) return false;
     return true;
   }).map(item => item.id);
 }

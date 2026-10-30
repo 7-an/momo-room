@@ -1,9 +1,9 @@
-import { applyElapsed, friendship, canMeet } from '../core/index.js?v=20261030c';
-import { topics } from '../content/journey.js?v=20261030c';
-import { state, save, greetCoolingDown, worldNow } from './session.js?v=20261030c';
-import { render } from './render.js?v=20261030c';
-import { $, toast, icon } from './dom.js?v=20261030c';
-import { act } from './actions.js?v=20261030c';
+import { applyElapsed, friendship, canMeet } from '../core/index.js?v=20261030d';
+import { topics } from '../content/journey.js?v=20261030d';
+import { state, save, greetCoolingDown, worldNow } from './session.js?v=20261030d';
+import { render } from './render.js?v=20261030d';
+import { $, toast, icon } from './dom.js?v=20261030d';
+import { act } from './actions.js?v=20261030d';
 
 let selectedTopic = null;
 // Tapping her: a plain hello while strangers or while she sleeps, a chat otherwise.
@@ -46,7 +46,7 @@ function chooseTopic(topic) {
       $('#chat-choices').hidden = true; $('#chat-answer').hidden = false;
       $('#chat-intro').textContent = `你说：${choice.label}`;
       $('#chat-reply').textContent = result.reply;
-      $('#chat-saved').textContent = result.added.includes(`chat-${topic.id}`) ? '这段小对话，已经放进回忆小册。' : `这句话，${state.name}记住了。`;
+      $('#chat-saved').textContent = result.patience === 'over' ? '今天聊得够多了，她想安静一会儿。' : result.patience === 'enough' ? '聊得有点多了，她开始心不在焉。' : result.added.includes(`chat-${topic.id}`) ? '这段小对话，已经放进回忆小册。' : `这句话，${state.name}记住了。`;
       $('#chat-done').focus();
     }); $('#chat-choices').append(button);
   }

@@ -1,9 +1,9 @@
-import { applyElapsed, friendship, canInteract, canMeet } from '../core/index.js?v=20261030c';
-import { state, save, worldNow } from './session.js?v=20261030c';
-import { render } from './render.js?v=20261030c';
-import { $, toast, speak } from './dom.js?v=20261030c';
-import { sound } from './audio.js?v=20261030c';
-import { act } from './actions.js?v=20261030c';
+import { applyElapsed, friendship, canInteract, canMeet } from '../core/index.js?v=20261030d';
+import { state, save, worldNow } from './session.js?v=20261030d';
+import { render } from './render.js?v=20261030d';
+import { $, toast, speak } from './dom.js?v=20261030d';
+import { sound } from './audio.js?v=20261030d';
+import { act } from './actions.js?v=20261030d';
 
 // 15-second star catching. Rewards are settled once, only when the timer runs out.
 const starTimeouts = new Set();

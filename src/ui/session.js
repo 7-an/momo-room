@@ -1,5 +1,5 @@
-import { STORAGE_KEY, freshState, restoreState } from '../core/index.js?v=20261030c';
-import { $ } from './dom.js?v=20261030c';
+import { STORAGE_KEY, freshState, restoreState } from '../core/index.js?v=20261030d';
+import { $ } from './dom.js?v=20261030d';
 // The one live game state for this page. Other modules read it through this binding.
 export let state, storageAvailable = true;
 // When the player was last here, read before restoring moves `updatedAt` to now.

@@ -2772,3 +2772,13 @@ dialog.sheet {
     opacity: 1;
   }
 }
+
+/* She's had enough of this for now: the button still works, it just looks tired. */
+.dock-btn.weary {
+  filter: saturate(.45);
+}
+
+.dock-btn.weary small {
+  color: #a33c3c;
+  font-weight: 700;
+}

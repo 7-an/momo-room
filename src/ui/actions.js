@@ -1,13 +1,13 @@
-import { applyElapsed, friendship, visit } from '../core/index.js?v=20261030c';
-import { stageFor, greeting, petLines, actionLines, unlockNotes } from '../content/dialogue.js?v=20261030c';
-import { sleepyLines } from '../content/world.js?v=20261030c';
-import { discoverables, SHELVES } from '../persona/index.js?v=20261030c';
-import { state, cooldowns, save, worldNow } from './session.js?v=20261030c';
-import { render } from './render.js?v=20261030c';
-import { toast, speak } from './dom.js?v=20261030c';
-import { sound } from './audio.js?v=20261030c';
-import { effect, react, resetPose } from './effects.js?v=20261030c';
-import { queueStories } from './stories.js?v=20261030c';
+import { applyElapsed, friendship, visit } from '../core/index.js?v=20261030d';
+import { stageFor, greeting, petLines, actionLines, unlockNotes, patienceLines, patienceNotes } from '../content/dialogue.js?v=20261030d';
+import { sleepyLines } from '../content/world.js?v=20261030d';
+import { discoverables, SHELVES } from '../persona/index.js?v=20261030d';
+import { state, cooldowns, save, worldNow } from './session.js?v=20261030d';
+import { render } from './render.js?v=20261030d';
+import { $, toast, speak } from './dom.js?v=20261030d';
+import { sound } from './audio.js?v=20261030d';
+import { effect, react, resetPose } from './effects.js?v=20261030d';
+import { queueStories } from './stories.js?v=20261030d';
 
 const waits = { greet: 3000, pet: 650, feed: 2400, wash: 2200, gift: 1500, sleep: 450 };
 const shelfLabel = Object.fromEntries(SHELVES.map(shelf => [shelf.kind, shelf.label]));
@@ -37,6 +37,15 @@ export function act(action, { point, score = 0, selection = null, checkMeet = tr
     case 'play': react('happy'); effect('star', 8); speak(actionLines.play(level, score)); break;
     case 'sleep': resetPose(); speak(actionLines.sleep(level, state.sleeping)); break;
   }
+  // Too much of the same thing: she says so, and the hearts stop.
+  const tired = result.patience && result.patience !== 'comfy' ? patienceLines[action]?.[result.patience] : null;
+  if (tired) {
+    if (!selection) speak(tired[Math.floor(Math.random() * tired.length)]);
+    if (action === 'pet' || result.patience === 'over') $('#effects').replaceChildren();
+    if (result.patience === 'over') react('washing', 1200);
+  }
+  const note = result.patience && patienceNotes[action]?.[result.patience];
+  if (note) toast(result.xpChange < 0 ? `${note}好感 ${result.xpChange}。` : note);
   sound(action === 'sleep' ? 'sleep' : 'soft');
   render(); save();
   if (result.levelUp) {

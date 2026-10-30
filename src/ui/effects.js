@@ -1,6 +1,6 @@
-import { whereabouts } from '../core/index.js?v=20261030c';
-import { state, worldNow } from './session.js?v=20261030c';
-import { $ } from './dom.js?v=20261030c';
+import { whereabouts } from '../core/index.js?v=20261030d';
+import { state, worldNow } from './session.js?v=20261030d';
+import { $ } from './dom.js?v=20261030d';
 let reactionTimeout = null, sleepEffectInterval = null;
 const EATING = ['breakfast', 'lunch', 'tea', 'dinner'];
 // The sprite class she rests in between reactions: asleep, eating, or idle.

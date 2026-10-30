@@ -1,7 +1,7 @@
-import { friendship } from './relationship.js?v=20261030c';
-import { care, chat } from './care.js?v=20261030c';
-import { canMeet, whereabouts } from './world.js?v=20261030c';
-import { discover, matchDiscoveries } from '../persona/index.js?v=20261030c';
+import { friendship } from './relationship.js?v=20261030d';
+import { care, chat } from './care.js?v=20261030d';
+import { canMeet, whereabouts } from './world.js?v=20261030d';
+import { discover, matchDiscoveries } from '../persona/index.js?v=20261030d';
 
 // One interaction in the world: she has to be here and awake enough, then the usual rules apply,
 // then anything she revealed about herself goes into the guide.
@@ -18,7 +18,7 @@ export function visit(state, action, { now = Date.now(), worldNow = now, score =
   for (let stage = before + 1; stage <= Math.min(5, after); stage++) stages.push(stage);
   // Waking her from a nap reveals nothing new.
   const on = action === 'sleep' && !state.sleeping ? null : action;
-  const ids = matchDiscoveries({ on, level: after, topic, choice, activity: meeting.where.activity, stages });
+  const ids = matchDiscoveries({ on, level: after, topic, choice, activity: meeting.where.activity, patience: result.patience, stages });
   const discovered = ids.filter(id => discover(state, id, now));
   return { ...result, where: meeting.where, discovered };
 }

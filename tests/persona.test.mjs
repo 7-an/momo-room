@@ -49,11 +49,13 @@ assert.deepEqual(matchDiscoveries({ on: 'gift', level: 3 }), ['flowers']);
 assert.deepEqual(matchDiscoveries({ on: 'gift', level: 4 }).sort(), ['flowers', 'phrase-passable']);
 assert.deepEqual(matchDiscoveries({ on: null, level: 4, stages: [4] }).sort(), ['phrase-hmph', 'sudden-touch']);
 assert.deepEqual(matchDiscoveries({ on: 'greet', level: 1 }), []);
+assert.deepEqual(matchDiscoveries({ on: 'pet', level: 4, patience: 'comfy' }), ['phrase-fine'], '正常摸摸不会发现「讨厌一直摸」');
+assert.deepEqual(matchDiscoveries({ on: 'pet', level: 4, patience: 'over' }).sort(), ['phrase-fine', 'too-much-touch']);
 // Every entry can actually be found by some event.
 const events = ['greet', 'play', 'feed', 'gift', 'sleep', 'pet', 'wash'];
 for (const item of discoverables()) {
   const rule = item.found;
-  const event = rule.on === 'stage' ? { on: null, level: 5, stages: [rule.stage] } : { on: rule.on, level: 5, topic: rule.topic, choice: rule.choice ?? 'stay', activity: rule.activity };
+  const event = rule.on === 'stage' ? { on: null, level: 5, stages: [rule.stage] } : { on: rule.on, level: 5, topic: rule.topic, choice: rule.choice ?? 'stay', activity: rule.activity, patience: rule.patience };
   if (rule.topic && !rule.choice) event.choice = 'win';
   assert.ok(events.includes(rule.on) || rule.on === 'stage');
   assert.ok(matchDiscoveries(event).includes(item.id), `${item.id} 必须能被发现`);

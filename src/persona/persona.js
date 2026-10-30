@@ -11,6 +11,7 @@
 //   { on: 'greet', topic, choice }         after a chat answer (choice optional)
 //   { on: 'greet', activity: 'tea' }       while she is doing that activity
 //   { on: 'stage', stage: 4 }              when the relationship reaches that stage
+//   { on: 'pet', patience: 'over' }        only when that action went past her patience
 //   minLevel                               optional, on any of the above
 export const persona = {
   status: 'placeholder',
@@ -33,6 +34,7 @@ export const persona = {
     { id: 'sudden-touch', category: 'boundary', label: '还不熟就被碰', weight: 3, tags: ['pet-early'], icon: 'hand', quote: '我们还没那么熟。请先别碰我。', note: '慢热的人需要时间。熟了以后，她会自己靠近一点。', hint: '等你们熟到可以理头发的时候，就明白了。', found: { on: 'stage', stage: 4 } },
     { id: 'bubbles-in-eyes', category: 'care', label: '泡泡进眼睛', weight: 2, tags: ['wash'], icon: 'drop', quote: '泡泡别弄进眼睛。', note: '洗香香时，这是她第一句要叮嘱的。', hint: '帮她洗香香之前，她会先提醒一件事。', found: { on: 'wash' } },
     { id: 'hot-water', category: 'care', label: '太烫的水', weight: 1, tags: ['wash'], icon: 'drop', quote: '水温倒是刚刚好。……下次也照这个水温。', note: '水温要刚刚好，烫一点点她都会皱眉。', hint: '水温要刚刚好。', found: { on: 'wash' } },
+    { id: 'too-much-touch', category: 'boundary', label: '没完没了地摸头', weight: 2, tags: ['pet-too-much'], icon: 'hand', quote: '够了！头发都乱了……再摸我真的生气了。', note: '喜欢被摸头，但一直摸就会烦。适可而止，她才会想要下一次。', hint: '摸摸头是好事，可是……一直摸呢？', found: { on: 'pet', patience: 'over' } },
     { id: 'noisy', category: 'environment', label: '吵吵闹闹', weight: 1, tags: ['noise'], icon: 'noise', quote: '嘘……这里要小声一点。', note: '她说话总是小小声的，在书店里更是。', hint: '去书店找她的时候，说话要轻。', found: { on: 'greet', activity: 'read' } }
   ],
   opinions: [

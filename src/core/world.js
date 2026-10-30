@@ -1,7 +1,8 @@
-import { dayKey } from './state.js?v=20261030c';
-import { friendship } from './relationship.js?v=20261030c';
-import { persona, activityAt } from '../persona/index.js?v=20261030c';
-import { placeById } from '../content/town.js?v=20261030c';
+import { dayKey } from './state.js?v=20261030d';
+import { friendship } from './relationship.js?v=20261030d';
+import { persona, activityAt } from '../persona/index.js?v=20261030d';
+import { placeById } from '../content/town.js?v=20261030d';
+import { annoyedNow } from './patience.js?v=20261030d';
 
 // The world runs on the player's local clock. Nothing here changes state.
 export const clockOf = (now = Date.now()) => {
@@ -58,8 +59,11 @@ const WEATHER_WHY = { sunny: '今天的阳光很好', cloudy: '天有点阴', ra
 export function moodOf(state, now = Date.now()) {
   const where = whereabouts(state, now), weather = weatherOf(now);
   const score = state.joy * 0.5 + state.food * 0.25 + state.energy * 0.25 + WEATHER_MOOD[weather.kind];
-  const key = score >= 80 ? 'great' : score >= 62 ? 'good' : score >= 45 ? 'okay' : 'low';
-  const why = where.asleep ? '睡得正香' : state.food < 40 ? '有点饿了' : state.energy < 35 ? '有点累' : state.joy < 45 ? '有点无聊' : where.activity === 'wake' ? '还没完全醒' : WEATHER_WHY[weather.kind];
+  const annoyed = annoyedNow(state, now);
+  let key = score >= 80 ? 'great' : score >= 62 ? 'good' : score >= 45 ? 'okay' : 'low';
+  // Pushed past her patience recently: at best「还行」, and she says why.
+  if (annoyed && (key === 'great' || key === 'good')) key = 'okay';
+  const why = annoyed ? '刚才被烦到了，有点不高兴' : where.asleep ? '睡得正香' : state.food < 40 ? '有点饿了' : state.energy < 35 ? '有点累' : state.joy < 45 ? '有点无聊' : where.activity === 'wake' ? '还没完全醒' : WEATHER_WHY[weather.kind];
   return { key, label: MOOD[key], why };
 }
 

@@ -1,13 +1,26 @@
-import { friendship, canInteract, canMeet, dailyPlan, whereabouts, clockOf, phaseOf, weatherOf, moodOf } from '../core/index.js?v=20261030c';
-import { stageFor } from '../content/dialogue.js?v=20261030c';
-import { memoryDefinitions } from '../content/journey.js?v=20261030c';
-import { placeById } from '../content/town.js?v=20261030c';
-import { persona, minutesOf } from '../persona/index.js?v=20261030c';
-import { state, greetCoolingDown, worldNow } from './session.js?v=20261030c';
-import { $, el } from './dom.js?v=20261030c';
-import { settlePose, syncSleepEffect } from './effects.js?v=20261030c';
+import { friendship, canInteract, canMeet, dailyPlan, whereabouts, clockOf, phaseOf, weatherOf, moodOf, patienceFor } from '../core/index.js?v=20261030d';
+import { stageFor } from '../content/dialogue.js?v=20261030d';
+import { memoryDefinitions } from '../content/journey.js?v=20261030d';
+import { placeById } from '../content/town.js?v=20261030d';
+import { persona, minutesOf } from '../persona/index.js?v=20261030d';
+import { state, greetCoolingDown, worldNow } from './session.js?v=20261030d';
+import { $, el } from './dom.js?v=20261030d';
+import { settlePose, syncSleepEffect } from './effects.js?v=20261030d';
 
 const hints = { greet: '', play: '来比一局', feed: '草莓挑得不错', gift: '10 颗星星糖', sleep: '休息一小会儿', pet: '只准摸一下', wash: '水温刚刚好' };
+// What the button says once she's getting tired of it. `soon`: one or two left before that.
+const patienceHints = {
+  pet: { soon: '快摸够了', enough: '她摸够了', over: '再摸要生气' },
+  greet: { enough: '聊得有点多', over: '让她歇会儿' },
+  gift: { enough: '今天送过了', over: '明天再送吧' },
+  wash: { enough: '刚洗过', over: '刚洗过' }
+};
+function patienceHint(action, now) {
+  const words = patienceHints[action]; if (!words) return null;
+  const { tier, left } = patienceFor(state, action, now);
+  if (tier === 'comfy') return left <= 2 && words.soon ? words.soon : null;
+  return words[tier];
+}
 // Draws the whole page from state and the town clock. Safe to call any time; it never changes state.
 export function render() {
   const now = worldNow();
@@ -64,8 +77,9 @@ export function render() {
     const blocked = !access.ok || !meet.ok || (state.sleeping && action !== 'sleep') || (action === 'greet' && cooling);
     button.disabled = blocked;
     button.classList.toggle('locked', !access.ok);
+    button.classList.toggle('weary', access.ok && meet.ok && patienceFor(state, action, Date.now()).tier !== 'comfy');
     button.title = !access.ok ? `${access.message} Lv. ${access.requiredLevel} 解锁。` : !meet.ok ? meet.message : '';
-    const hint = !access.ok ? `Lv. ${access.requiredLevel} 解锁` : meet.away ? '她不在这里' : !meet.ok ? (quiet ? '她睡着了' : '这里不方便') : action === 'sleep' && state.sleeping ? '元气恢复中' : hints[action];
+    const hint = !access.ok ? `Lv. ${access.requiredLevel} 解锁` : meet.away ? '她不在这里' : !meet.ok ? (quiet ? '她睡着了' : '这里不方便') : action === 'sleep' && state.sleeping ? '元气恢复中' : patienceHint(action, Date.now()) ?? hints[action];
     button.querySelector('small').textContent = hint;
   });
   const touchAllowed = together && canInteract(state, 'pet').ok && canMeet(state, 'pet', now).ok && !state.sleeping;
